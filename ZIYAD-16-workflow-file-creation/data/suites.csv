@@ -1,0 +1,2 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Tue Nov 04 20:16:31 UTC 2025","Tue Nov 04 20:16:36 UTC 2025","4751","","Registration Tests","","tests.registration.RegistrationTests","registrationModalIsOpened","Check registration modsal is opened",""
