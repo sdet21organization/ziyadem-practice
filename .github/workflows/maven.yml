@@ -12,7 +12,8 @@ on:
   push:
     branches:
       - main
-      - feature/**
+      - '**'
+     # - feature/**
   pull_request:
     branches:
       - main
@@ -20,7 +21,6 @@ on:
 
 jobs:
   api-tests:
-    if: ${{ false }}  # 🔕 временно отключено
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
