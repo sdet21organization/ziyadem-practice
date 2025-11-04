@@ -11,13 +11,11 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - main
-      - '**'
-     # - feature/**
+      - '**'             # пуш в любую ветку
   pull_request:
     branches:
-      - main
-  workflow_dispatch:
+      - '**'             # PR в любую ветку
+  workflow_dispatch:      # ручной запуск из GitHub UI
 
 jobs:
   api-tests:
