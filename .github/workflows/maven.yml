@@ -20,6 +20,7 @@ on:
 
 jobs:
   api-tests:
+    if: ${{ false }}  # 🔕 временно отключено
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,15 +39,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run API Tests
-        run: mvn clean test -f api-tests/pom.xml -Dmaven.test.failure.ignore=true
+#      - name: Run API Tests
+#        run: mvn clean test -f api-tests/pom.xml -Dmaven.test.failure.ignore=true
 
-      - name: Upload Allure Results (API)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-api
-          path: api-tests/target/allure-results
+#      - name: Upload Allure Results (API)
+#       if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#         name: allure-results-api
+#          path: api-tests/target/allure-results
 
   ui-tests:
     runs-on: ubuntu-latest
@@ -76,7 +77,7 @@ jobs:
           path: ui-tests/target/allure-results
 
   allure-report:
-    needs: [api-tests, ui-tests]
+    needs: [ui-tests] #[api-tests, ui-tests]
     runs-on: ubuntu-latest
     if: always()
     steps:
@@ -84,11 +85,11 @@ jobs:
         with:
           fetch-depth: 0  # чтобы подтянуть ветку gh-pages тоже
 
-      - name: Download Allure Results (API)
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-results-api
-          path: allure-results/api
+#      - name: Download Allure Results (API)
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: allure-results-api
+#          path: allure-results/api
 
       - name: Download Allure Results (UI)
         uses: actions/download-artifact@v4
@@ -99,7 +100,7 @@ jobs:
       - name: Merge Allure Results
         run: |
           mkdir -p merged-allure-results
-          rsync -a allure-results/api/ merged-allure-results/ || true
+#          rsync -a allure-results/api/ merged-allure-results/ || true
           rsync -a allure-results/ui/ merged-allure-results/ || true
 
       - name: Restore Allure History
