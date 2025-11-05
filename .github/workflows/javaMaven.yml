@@ -1,0 +1,240 @@
+name: Java Maven Tests with Allure
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  api-tests:
+    if: ${{ false }}  # 🔕 временно отключено
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # чтобы подтянуть ветку gh-pages тоже
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Run API Tests
+        run: mvn clean test -f api-tests/pom.xml -Dmaven.test.failure.ignore=true
+
+      - name: Upload Allure Results (API)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-api
+          path: api-tests/target/allure-results
+
+  ui-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run UI Tests
+        run: mvn clean test -f ui-tests/pom.xml -Dmaven.test.failure.ignore=true
+
+      - name: Upload Allure Results (UI)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-ui
+          path: ui-tests/target/allure-results
+
+  allure-report:
+    needs: [ui-tests] #[api-tests, ui-tests]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # чтобы подтянуть ветку gh-pages тоже
+
+        #    - name: Download Allure Results (API)
+        #      uses: actions/download-artifact@v4
+        #      with:
+        #        name: allure-results-api
+        #        path: allure-results/api
+
+      - name: Download Allure Results (UI)
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results-ui
+          path: allure-results/ui
+
+      - name: Merge Allure Results
+        run: |
+          mkdir -p merged-allure-results
+          # rsync -a allure-results/api/ merged-allure-results/ || true
+          rsync -a allure-results/ui/ merged-allure-results/ || true
+
+      - name: Restore Allure History
+        run: |
+          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          safe_branch="${branch//\//-}"
+
+          git fetch origin gh-pages:gh-pages || true
+          git checkout gh-pages -- "${safe_branch}/history" || true
+
+          mkdir -p allure-history
+          if [ -d "${safe_branch}/history" ]; then
+            cp -r "${safe_branch}/history/"* allure-history/ || true
+          fi
+
+      - name: Cache Allure CLI
+        id: cache-allure
+        uses: actions/cache@v4
+        with:
+          path: /opt/allure
+          key: allure-2.29.0
+
+      - name: Install Allure CLI
+        if: steps.cache-allure.outputs.cache-hit != 'true'
+        run: |
+          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
+          tar -zxvf allure.tgz
+          sudo mv allure-2.29.0 /opt/allure
+
+      - name: Add Allure CLI to PATH
+        run: echo "/opt/allure/bin" >> $GITHUB_PATH
+
+      - name: Generate Allure Report
+        run: |
+          # Подготовим старую историю в merged-allure-results
+          mkdir -p merged-allure-results/history
+          if [ -d allure-history ]; then
+            cp -r allure-history/* merged-allure-results/history/ || true
+          fi
+
+          # Генерируем отчет с учётом истории
+          allure generate merged-allure-results -o allure-report
+          
+          ls -R allure-report/history # для отладки
+
+      - name: Save Allure History
+        run: |
+          branch="${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}"
+          safe_branch="${branch//\//-}"
+
+          # Полностью очистим историю в gh-pages для этой ветки
+          rm -rf "${safe_branch}/history"
+          mkdir -p "${safe_branch}/history"
+
+          # Копируем новые файлы из allure-report/history
+          cp -r allure-report/history/* "${safe_branch}/history/" || true
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add -A
+          git commit -m "Update Allure history for ${safe_branch}" || true
+          git push origin gh-pages
+
+          ls -R allure-report # для отладки
+
+      - name: Deploy Allure Report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          destination_dir: ${{ github.head_ref || github.ref_name }}
+          keep_files: true
+
+      - name: Comment PR with Allure Report Link
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = context.payload.pull_request.head.ref;
+            const repoName = context.repo.repo;
+            const owner = context.repo.owner;
+            const reportUrl = `https://${owner}.github.io/${repoName}/${branchName}/`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner,
+              repo: repoName,
+              body: `✅ Allure Report доступен по ссылке: [открыть отчёт](${reportUrl})`
+            });
+
+      - name: Send Discord Notification
+        if: github.ref == 'refs/heads/main'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          branch="${{ github.head_ref || github.ref_name }}"
+          report_url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${branch}/"
+          
+          passed=$(jq '.statistic.passed' allure-report/widgets/summary.json)
+          failed=$(jq '.statistic.failed' allure-report/widgets/summary.json)
+          broken=$(jq '.statistic.broken' allure-report/widgets/summary.json)
+          skipped=$(jq '.statistic.skipped' allure-report/widgets/summary.json)
+          total=$(jq '.statistic.total' allure-report/widgets/summary.json)
+          
+          color=3066993
+          
+          payload=$(jq -n \
+            --arg passed "$passed" \
+            --arg failed "$failed" \
+            --arg broken "$broken" \
+            --arg skipped "$skipped" \
+            --arg total "$total" \
+            --arg url "$report_url" \
+            --arg branch "$branch" \
+            --arg repo "${{ github.repository }}" \
+            --argjson color "$color" \
+            '{
+              "embeds": [
+                {
+                 "title": "Allure Report",
+                 "url": $url,
+                 "color": $color,
+                 "fields": [
+                   {
+                    "name": "📁 ",
+                    "value": $repo,
+                    "inline": true
+                   },
+                  {
+                   "name": "🌿 ",
+                   "value": $branch,
+                   "inline": true
+                  },
+                  {
+                    "name": "Test Results",
+                    "value": "📊 Total \($total) ✅ Passed \($passed) ⚠️ Broken \($broken) ❌ Failed \($failed) ⏭️ Skipped \($skipped)",
+                    "inline": false
+                   }
+                  ]
+                }
+              ]
+             }')
+          
+          curl -H "Content-Type: application/json" \
+              -d "$payload" \
+              "$DISCORD_WEBHOOK_URL"
