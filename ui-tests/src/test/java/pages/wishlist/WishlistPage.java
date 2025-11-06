@@ -11,15 +11,11 @@ import pages.BasePage;
 
 public class WishlistPage extends BasePage {
 
-
     private final Locator wishlistTable;
-    private final Locator productNames;
-
 
     public WishlistPage(TestContext context) {
         super(context);
         this.wishlistTable = context.page.locator("table.wishlist_table");
-        this.productNames = context.page.locator("table.wishlist_table td.product-name a");
     }
 
     @Step("Wait wishlist page loaded")
