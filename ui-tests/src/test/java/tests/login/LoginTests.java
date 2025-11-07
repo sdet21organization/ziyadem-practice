@@ -1,6 +1,9 @@
 
 package tests.login;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
@@ -8,7 +11,10 @@ import tests.BaseTest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Epic("UI Tests")
+@Feature("Login Functionality")
 @DisplayName("Login Tests")
+@Owner("Slawa Sliepchenko")
 public class LoginTests extends BaseTest {
 
     @Test
@@ -135,7 +141,7 @@ public class LoginTests extends BaseTest {
         LoginPage login = new LoginPage(context);
         login.openLoginPage();
         login.clickForgotPassword();
-        login.waitForResetPasswordPage(); // ← добавили
+        login.waitForResetPasswordPage();
         assertTrue(context.page.url().contains("lost-password"), "URL should contain 'lost-password'");
         assertTrue(context.page.isVisible("input[name='user_login']"), "Reset form must contain username/email input");
         assertTrue(context.page.isVisible("button[type='submit']"), "Reset form must contain a submit button");
