@@ -1,5 +1,6 @@
 package pages;
 
+import com.microsoft.playwright.Locator;
 import context.TestContext;
 import io.qameta.allure.Step;
 
@@ -96,5 +97,12 @@ public class LoginPage extends BasePage {
     public boolean isPasswordVisible() {
         String type = context.page.getAttribute(passwordInput, "type");
         return "text".equalsIgnoreCase(type);
+    }
+
+    @Step("Wait for Reset Password page to load")
+    public void waitForResetPasswordPage() {
+        context.page.locator("input[name='user_login']").waitFor(
+                new Locator.WaitForOptions().setTimeout(5000)
+        );
     }
 }

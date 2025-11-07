@@ -1,6 +1,9 @@
 
 package tests.login;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
@@ -8,7 +11,10 @@ import tests.BaseTest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Epic("UI Tests")
+@Feature("Login Functionality")
 @DisplayName("Login Tests")
+@Owner("Slawa Sliepchenko")
 public class LoginTests extends BaseTest {
 
     @Test
@@ -57,7 +63,7 @@ public class LoginTests extends BaseTest {
         login.enterPassword("AnyPassword123!");
         login.submit();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
-        assertTrue(login.isFormVisible(),  "Login form must remain visible");
+        assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
     }
@@ -70,7 +76,7 @@ public class LoginTests extends BaseTest {
         login.enterPassword("AnyPassword123!");
         login.submit();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
-        assertTrue(login.isFormVisible(),  "Login form must remain visible");
+        assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
     }
@@ -83,7 +89,7 @@ public class LoginTests extends BaseTest {
         login.enterUsername(utils.ConfigurationReader.get("email"));
         login.submit();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
-        assertTrue(login.isFormVisible(),  "Login form must remain visible");
+        assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
     }
@@ -95,7 +101,7 @@ public class LoginTests extends BaseTest {
         login.openLoginPage();
         login.submit();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
-        assertTrue(login.isFormVisible(),  "Login form must remain visible");
+        assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
     }
@@ -135,14 +141,10 @@ public class LoginTests extends BaseTest {
         LoginPage login = new LoginPage(context);
         login.openLoginPage();
         login.clickForgotPassword();
-        assertTrue(context.page.url().contains("lost-password"),
-                "URL should contain 'lost-password'");
-        assertTrue(context.page.isVisible("form.woocommerce-ResetPassword"),
-                "Reset password form should be visible");
-        assertTrue(context.page.isVisible("input[name='user_login']"),
-                "Reset form must contain 'user_login' input");
-        assertTrue(context.page.isVisible("form.woocommerce-ResetPassword button[type='submit']"),
-                "Reset form must contain a submit button");
+        login.waitForResetPasswordPage();
+        assertTrue(context.page.url().contains("lost-password"), "URL should contain 'lost-password'");
+        assertTrue(context.page.isVisible("input[name='user_login']"), "Reset form must contain username/email input");
+        assertTrue(context.page.isVisible("button[type='submit']"), "Reset form must contain a submit button");
     }
 
 }
