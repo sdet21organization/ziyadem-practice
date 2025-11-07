@@ -56,15 +56,6 @@ public class WishlistPage extends BasePage {
         return msg.innerText().trim();
     }
 
-    @Step("Remove product if present by link")
-    public void removeIfPresentByLink(String productHref) {
-        if (hasProductByLink(productHref)) {
-            removeByLink(productHref);
-            waitRemovedMessage();
-            waitAbsentByLink(productHref);
-        }
-    }
-
     @Step("Clear all products from wishlist")
     public void clearAll() {
         Locator buttons = context.page.locator("table.wishlist_table a.remove");
