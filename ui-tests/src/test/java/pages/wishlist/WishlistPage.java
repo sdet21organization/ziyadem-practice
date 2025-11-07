@@ -52,7 +52,7 @@ public class WishlistPage extends BasePage {
     @Step("Wait for 'removed' message")
     public String waitRemovedMessage() {
         Locator msg = context.page.locator("text=Artikel entfernt.");
-        msg.waitFor(); // ждём появления
+        msg.waitFor();
         return msg.innerText().trim();
     }
 

@@ -20,8 +20,7 @@ public class NutsPage extends BasePage {
     public void open() {
         super.open("produkt-kategory/kuruyemis");
         context.page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        context.page.locator("li.product, div.product-small.product")
-                .first();
+        context.page.locator("li.product, div.product-small.product").first();
     }
 
     private Locator productCardAt(int index) {
