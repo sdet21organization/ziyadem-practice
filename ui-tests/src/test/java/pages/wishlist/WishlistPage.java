@@ -55,4 +55,13 @@ public class WishlistPage extends BasePage {
         msg.waitFor(); // ждём появления
         return msg.innerText().trim();
     }
+
+    @Step("Remove product if present by link")
+    public void removeIfPresentByLink(String productHref) {
+        if (hasProductByLink(productHref)) {
+            removeByLink(productHref);
+            waitRemovedMessage();
+            waitAbsentByLink(productHref);
+        }
+    }
 }

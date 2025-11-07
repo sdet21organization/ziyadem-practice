@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Epic("UI Tests")
 @Feature("Wishlist")
+@DisplayName("Wishlist tests (Guest)")
 @Owner("Oleksiy Korniyenko")
 public class WishlistGuestTests extends BaseTest {
 
