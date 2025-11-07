@@ -7,6 +7,8 @@ import context.TestContext;
 import io.qameta.allure.Step;
 import pages.BasePage;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class NutsPage extends BasePage {
 
     public NutsPage(TestContext context) {
@@ -18,8 +20,7 @@ public class NutsPage extends BasePage {
     public void open() {
         super.open("produkt-kategory/kuruyemis");
         context.page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-        context.page.locator("li.product, div.product-small.product")
-                .first();
+        context.page.locator("li.product, div.product-small.product").first();
     }
 
     private Locator productCardAt(int index) {
@@ -72,6 +73,29 @@ public class NutsPage extends BasePage {
         wishlistBtn.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         wishlistBtn.click();
         context.page.waitForURL("**/wishlist*");
+    }
+
+    @Step("Assert product #{index} added to wishlist")
+    public NutsPage assertAddedToWishlist(int index) {
+        String msg = getAddedMessage(index);
+        assertTrue(
+                msg.contains("Artikel hinzugefügt!"),
+                "Expected 'Artikel hinzugefügt!' but got: " + msg
+        );
+        return this;
+    }
+
+    @Step("Open wishlist and verify products are present")
+    public WishlistPage openWishlistAndVerify(String... links) {
+        clickWishlistIcon();
+        WishlistPage wishlist = new WishlistPage(context).waitLoaded();
+        for (String link : links) {
+            assertTrue(
+                    wishlist.hasProductByLink(link),
+                    "Product not found in wishlist!\nURL: " + link
+            );
+        }
+        return wishlist;
     }
 }
 

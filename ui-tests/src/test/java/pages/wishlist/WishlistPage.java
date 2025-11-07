@@ -52,7 +52,19 @@ public class WishlistPage extends BasePage {
     @Step("Wait for 'removed' message")
     public String waitRemovedMessage() {
         Locator msg = context.page.locator("text=Artikel entfernt.");
-        msg.waitFor(); // ждём появления
+        msg.waitFor();
         return msg.innerText().trim();
+    }
+
+    @Step("Clear all products from wishlist")
+    public void clearAll() {
+        Locator buttons = context.page.locator("table.wishlist_table a.remove");
+        int total = buttons.count();
+        if (total == 0) return;
+
+        for (int i = 0; i < total; i++) {
+            buttons.first().click();
+            context.page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        }
     }
 }
