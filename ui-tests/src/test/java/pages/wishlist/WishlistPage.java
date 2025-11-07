@@ -64,4 +64,16 @@ public class WishlistPage extends BasePage {
             waitAbsentByLink(productHref);
         }
     }
+
+    @Step("Clear all products from wishlist")
+    public void clearAll() {
+        Locator buttons = context.page.locator("table.wishlist_table a.remove");
+        int total = buttons.count();
+        if (total == 0) return;
+
+        for (int i = 0; i < total; i++) {
+            buttons.first().click();
+            context.page.waitForLoadState(LoadState.DOMCONTENTLOADED);
+        }
+    }
 }
