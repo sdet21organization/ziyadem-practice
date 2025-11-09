@@ -1,8 +1,11 @@
 package pages;
 
+import com.microsoft.playwright.Locator;
 import context.TestContext;
 import io.qameta.allure.Step;
 import utils.ConfigurationReader;
+
+import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 
 public abstract class BasePage {
@@ -23,15 +26,50 @@ public abstract class BasePage {
         context.page.navigate(ConfigurationReader.get("URL") + path);
     }
 
+    @Step("Get locator for selector: {selector}")
+    public Locator getLocator(String selector) {
+        return context.page.locator(selector);
+    }
+
+    @Step("Get locator for selector: {selector} at index: {index}")
+    public Locator getLocator(String selector, int index) {
+        return getLocator(selector).nth(index);
+    }
+
+    @Step("Wait for element to be visible: {selector}")
+    public void waitForVisibility(String selector) {
+        getLocator(selector).waitFor(new Locator.WaitForOptions().setTimeout(10000));
+    }
+
+    @Step("Wait for element to be visible: {selector}")
     protected void waitForVisible(String selector) {
         context.page.waitForSelector(selector);
     }
 
+    @Step("Click on element: {selector}")
     protected void click(String selector) {
         context.page.click(selector);
     }
 
+    @Step("Type {text} in to element: {selector}")
     protected void type(String selector, String text) {
         context.page.fill(selector, text);
+    }
+
+    @Step("Get text from element: {selector}")
+    public String getText(String selector) {
+        waitForVisibility(selector);
+        return getLocator(selector).innerText();
+    }
+
+    @Step("Get text from element: {selector} at index {index}")
+    public String getText(String selector, int index) {
+        return getLocator(selector, index).innerText();
+    }
+
+    @Step("Wait for the table has count of rows: {expectedCount}")
+    public void waitForTableRowCount(String tableSelector, int expectedCount) {
+        Locator rows = getLocator(tableSelector);
+        assertThat(rows).hasCount(expectedCount);
     }
 }
