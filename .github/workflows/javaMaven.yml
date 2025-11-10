@@ -227,7 +227,7 @@ jobs:
                   },
                   {
                     "name": "Test Results",
-                    "value": "📊 Total \($total) ✅ Passed \($passed) ⚠️ Broken \($broken) ❌ Failed \($failed) ⏭️ Skipped \($skipped)",
+                    "value": "📊 Total \($total) ✅ Passed \($passed) ⚠️ Broken \($broken) ❌ Failed \($failed) ⏭️ Skipped \($skipped)",
                     "inline": false
                    }
                   ]
