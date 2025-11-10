@@ -11,6 +11,12 @@ public class StartPage extends BasePage {
         super(context);
     }
 
+    @Step("Open start page")
+    public StartPage openStartPage() {
+        open();
+        return this;
+    }
+
     @Step("Open shopping bag page")
     public ShoppingBagPage openShoppingBagPage() {
         click(SHOPPING_BAG_ICON);

@@ -73,6 +73,7 @@ public class ShoppingBagPage extends BasePage {
 
     @Step("Edit item count in shopping bag and verify quantity and total price")
     public void editShoppingBagAndVerifyQuantityAndTotalPrice() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
         String actualPriceBefore = getText(ITEM_PRICE_IN_SHOPPING_BAG_TABLE).replaceAll("[^0-9.,]", "").trim();
         click(COUNTER_PLUS_BUTTON);
         click(SHOPPING_BAG_UPDATE_BUTTON);
@@ -179,6 +180,7 @@ public class ShoppingBagPage extends BasePage {
 
     @Step("Remove item from shopping bag with counter")
     public ShoppingBagPage removeProductWithCounter() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
         click(COUNTER_MINUS_BUTTON);
         click(SHOPPING_BAG_UPDATE_BUTTON);
         context.page.waitForLoadState(LoadState.NETWORKIDLE);

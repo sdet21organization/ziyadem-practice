@@ -135,6 +135,7 @@ public class ShoppingBagTests extends BaseTest {
     @DisplayName("New user sees empty cart")
     public void verifyNewUserSeesEmptyCart() {
         new StartPage(context)
+                .openStartPage()
                 .openShoppingBagPage()
                 .verifyShoppingBagIsEmpty();
     }
