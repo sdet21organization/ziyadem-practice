@@ -62,7 +62,7 @@ public class SpecialFlavorsCategoryPage extends BasePage {
             if (getLocator(PRODUCT_PRICE_DISCOUNTED).count() > 0) {
                 productPrice = getText(PRODUCT_PRICE_DISCOUNTED, 0).replaceAll("[^0-9.,]", "").trim();
             } else {
-                productPrice = getText(PRODUCT_PRICE).replaceAll("[^0-9.,]", "").trim();
+                productPrice = getText(PRODUCT_PRICE,0).replaceAll("[^0-9.,]", "").trim();
             }
             productNameList.add(productName);
             productPriceList.add(productPrice);
