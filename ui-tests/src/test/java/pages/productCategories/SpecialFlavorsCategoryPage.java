@@ -57,15 +57,13 @@ public class SpecialFlavorsCategoryPage extends BasePage {
             context.page.waitForLoadState(LoadState.NETWORKIDLE);
             waitForVisibility(QUANTITY_COUNTER_INPUT);
             waitForVisibility(ADD_TO_CART_BUTTON);
-            String productName = getText(PRODUCT_TITLE).replace("–", "-").trim();
-            String productPrice;
-            if (getLocator(PRODUCT_PRICE_DISCOUNTED).count() > 0) {
-                productPrice = getText(PRODUCT_PRICE_DISCOUNTED, 0).replaceAll("[^0-9.,]", "").trim();
-            } else {
-                productPrice = getText(PRODUCT_PRICE,0).replaceAll("[^0-9.,]", "").trim();
-            }
-            productNameList.add(productName);
-            productPriceList.add(productPrice);
+
+            productNameList.add(getText(PRODUCT_TITLE).replace("–", "-").trim());
+            productPriceList.add(
+                    getLocator(PRODUCT_PRICE_DISCOUNTED).count() > 0
+                    ? getText(PRODUCT_PRICE_DISCOUNTED, 0).replaceAll("[^0-9.,]", "").trim()
+                    : getText(PRODUCT_PRICE, 0).replaceAll("[^0-9.,]", "").trim());
+
             click(ADD_TO_CART_BUTTON);
             if (i == 3) {
                 click(SHOPPING_BAG_ICON);
@@ -79,10 +77,11 @@ public class SpecialFlavorsCategoryPage extends BasePage {
     }
 
     @Step("Verify product added to shopping bag")
-    public void verifyProductAddedToShoppingBag() {
-        String actualProductName = getText(PRODUCT_NAME_IN_MINI_CART_POPUP);
+    public SpecialFlavorsCategoryPage verifyProductAddedToShoppingBag() {
+        String actualProductName = getText(PRODUCT_NAME_IN_MINI_CART_POPUP, 0);
         assertEquals(expectedProductName, actualProductName,
                 "Product name in shopping cart does not match the added product");
+        return this;
     }
 
     @Step("Verify items count in shopping bag")
@@ -110,5 +109,46 @@ public class SpecialFlavorsCategoryPage extends BasePage {
         click(SHOPPING_BAG_ICON);
         waitForVisibility(SHOPPING_BAG_TABLE);
         return new ShoppingBagPage(context);
+    }
+
+    @Step("Go to shopping bag page")
+    public ShoppingBagPage goToShoppingBagPage() {
+        click(SHOPPING_BAG_ICON);
+        waitForVisibility(SHOPPING_BAG_TABLE);
+        return new ShoppingBagPage(context);
+    }
+
+    @Step("Add some products to shopping bag and get their prices")
+    public ShoppingBagPage addSomeProductsToShoppingBagAndGetPrices() {
+        for (int i = 0; ; i++) {
+            getLocator(AVAILABLE_ITEM, i).click();
+            context.page.waitForLoadState(LoadState.NETWORKIDLE);
+            waitForVisibility(QUANTITY_COUNTER_INPUT);
+            waitForVisibility(ADD_TO_CART_BUTTON);
+
+            productPriceList.add(
+                    getLocator(PRODUCT_PRICE_DISCOUNTED).count() > 0
+                            ? getText(PRODUCT_PRICE_DISCOUNTED, 0).replaceAll("[^0-9.,]", "").trim()
+                            : getText(PRODUCT_PRICE, 0).replaceAll("[^0-9.,]", "").trim());
+
+            click(ADD_TO_CART_BUTTON);
+            if (i == 5) {
+                click(SHOPPING_BAG_ICON);
+                return new ShoppingBagPage(context, productNameList, productPriceList);
+            }
+            context.page.goBack();
+            context.page.goBack();
+            waitForVisibility(SPECIAL_FLAVORS_CATEGORY_TITLE);
+            context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        }
+    }
+
+    @Step("Hover to shopping bag and verify mini cart popup")
+    public void hoverToShoppingBagAndVerifyMiniCartPopup(){
+        context.page.goBack();
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        context.page.hover(SHOPPING_BAG_ICON);
+        waitForVisibility(MINI_CART_POPUP_HOVER);
+        waitForVisibility(PRODUCT_NAME_IN_MINI_CART_POPUP);
     }
 }
