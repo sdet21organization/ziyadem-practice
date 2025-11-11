@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import context.TestContext;
 import io.qameta.allure.Step;
 import utils.ConfigurationReader;
+import java.util.Map;
 
 public abstract class BasePage {
 
@@ -55,5 +56,32 @@ public abstract class BasePage {
 
     protected void type(String selector, String text) {
         context.page.fill(selector, text);
+    }
+
+    protected void waitForVisibility(String selector) {
+        context.page.waitForSelector(selector);
+    }
+
+    protected Locator getLocator(String selector) {
+        return context.page.locator(selector);
+    }
+
+    protected Locator getLocator(String selector, int index) {
+        return context.page.locator(selector).nth(index);
+    }
+
+    protected String getText(String selector) {
+        return context.page.innerText(selector);
+    }
+
+    protected String getText(String selector, int index) {
+        return context.page.locator(selector).nth(index).innerText();
+    }
+
+    protected void waitForTableRowCount(String rowsSelector, int expected) {
+        context.page.waitForFunction(
+                "({sel, n}) => document.querySelectorAll(sel).length === n",
+                Map.of("sel", rowsSelector, "n", expected)
+        );
     }
 }

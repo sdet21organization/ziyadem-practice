@@ -8,7 +8,6 @@ import pages.BasePage;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static pages.shoppingBag.ShoppingBagElements.*;
 
 public class ShoppingBagPage extends BasePage {
@@ -26,43 +25,59 @@ public class ShoppingBagPage extends BasePage {
         this.productPriceList = productPriceList;
     }
 
-    @Step("Verify increased quantity in shopping bag")
+    @Step("Verify increased quantity")
     public void verifyIncreasedQuantityInShoppingBag() {
-        waitForTableRowCount(ROW_IN_SHOPPING_BAG_TABLE, 2);
-        getLocator(ITEM_COUNT_IN_SHOPPING_BAG_TABLE).inputValue();
-        String actualQuantity = getLocator(ITEM_COUNT_IN_SHOPPING_BAG_TABLE).inputValue();
-        assertEquals("2", actualQuantity,
-                "Product quantity in shopping bag is not increased as expected");
+        context.page.waitForSelector(ROW_IN_SHOPPING_BAG_TABLE);
+        String quantity = context.page.locator(ITEM_COUNT_IN_SHOPPING_BAG_TABLE).first().inputValue();
+        if (!quantity.equals("2")) {
+            throw new AssertionError("Expected quantity 2 but got " + quantity);
+        }
     }
 
-    @Step("Verify product added to shopping bag")
+    @Step("Verify all products in bag")
     public ShoppingBagPage verifyAllProductsAddedToShoppingBag() {
-        waitForVisibility(SHOPPING_BAG_TABLE);
-        waitForTableRowCount(ROW_IN_SHOPPING_BAG_TABLE, (productPriceList.size() + 1));
+        waitForVisible(SHOPPING_BAG_TABLE);
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
 
-        for (int i = 0; i < productPriceList.size(); i++) {
+        int expectedRows = productPriceList.size();
+        int actualRows = context.page.locator(ROW_IN_SHOPPING_BAG_TABLE).count();
+
+        if (actualRows != expectedRows) {
+            throw new AssertionError("Expected " + expectedRows + " rows but got " + actualRows);
+        }
+
+        for (int i = 0; i < expectedRows; i++) {
             String expectedName = productNameList.get(i);
             String expectedPrice = productPriceList.get(i);
-            String actualPrice = getText(ITEM_PRICE_IN_SHOPPING_BAG_TABLE, i).replaceAll("[^0-9.,]", "").trim();
-            String actualName = getText(ITEM_NAME_IN_SHOPPING_BAG_TABLE, i).trim();
-            assertEquals(expectedName, actualName,
-                    "Product name in shopping cart does not match the added product");
-            assertEquals(expectedPrice, actualPrice,
-                    "Product price in shopping cart does not match the added product");
+
+            String actualName = context.page.locator(ITEM_NAME_IN_SHOPPING_BAG_TABLE).nth(i).innerText().trim();
+            String actualPrice = context.page.locator(ITEM_PRICE_IN_SHOPPING_BAG_TABLE).nth(i).innerText().replaceAll("[^0-9.,]", "").trim();
+
+            if (!expectedName.equals(actualName)) {
+                throw new AssertionError("Names mismatch: " + expectedName + " vs " + actualName);
+            }
+            if (!expectedPrice.equals(actualPrice)) {
+                throw new AssertionError("Prices mismatch: " + expectedPrice + " vs " + actualPrice);
+            }
         }
         return this;
     }
 
-    @Step("Verify amount in shopping bag")
+    @Step("Verify total amount")
     public void verifyAmountInShoppingBag() {
-        String expectedAmount = productPriceList.stream()
-                .map(price -> price.replace(",", "."))
+        double sum = productPriceList.stream()
+                .map(p -> p.replace(",", "."))
                 .mapToDouble(Double::parseDouble)
-                .sum() + "";
-        expectedAmount = new DecimalFormat("0.00").format(Double.parseDouble(expectedAmount));
-        String actualAmount = getText(AMOUNT_IN_SHOPPING_BAG).replaceAll("[^0-9.,]", "").trim();
-        assertEquals(expectedAmount, actualAmount,
-                "Total amount in shopping bag does not match expected amount");
+                .sum();
+
+        String expectedAmount = new DecimalFormat("0.00").format(sum);
+        String actualAmount = context.page.locator(AMOUNT_IN_SHOPPING_BAG)
+                .innerText()
+                .replaceAll("[^0-9.,]", "")
+                .trim();
+
+        if (!expectedAmount.equals(actualAmount)) {
+            throw new AssertionError("Expected amount " + expectedAmount + " but got " + actualAmount);
+        }
     }
 }
