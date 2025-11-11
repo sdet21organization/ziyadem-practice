@@ -1,4 +1,3 @@
-
 package tests.login;
 
 import io.qameta.allure.Epic;
@@ -42,68 +41,102 @@ public class LoginTests extends BaseTest {
     @DisplayName("Login with incorrect password shows error and stays on login page")
     void loginWithIncorrectPassword_showsError() {
         LoginPage login = new LoginPage(context);
+
         login.openLoginPage();
         login.submitWith(
                 utils.ConfigurationReader.get("email"),
                 "wrong_password_123!"
         );
+        login.waitForErrorNotice();
         assertTrue(login.isErrorVisible(), "Error message should be displayed.");
         assertTrue(login.isFormVisible(), "Login form should still be visible.");
         assertTrue(context.page.url().contains("mein-konto"),
                 "User should remain on the login page (/mein-konto).");
-
+        assertTrue(login.errorContainsAny("Passwort", "password"),
+                "Error should mention password");
+        assertTrue(login.errorContainsAny("nicht korrekt", "incorrect", "wrong"),
+                "Error should indicate incorrect password");
     }
 
     @Test
-    @DisplayName("Login fails with non-existing user shows error and stays on login page")
-    void loginFailsWithNonExistingUser_noTextCheck() {
+    @DisplayName("Login with non-existing user shows error and stays on login page")
+    void loginFailsWithNonExistingUser() {
         LoginPage login = new LoginPage(context);
+
         login.openLoginPage();
-        login.enterUsername("not_existing_user_123@example.com");
-        login.enterPassword("AnyPassword123!");
-        login.submit();
-        assertTrue(login.isErrorVisible(), "Error block should be visible");
-        assertTrue(login.isFormVisible(), "Login form must remain visible");
+        login.submitWith(
+                "not-existing-user-" + System.currentTimeMillis() + "@mail.com",
+                "DummyPassword123!"
+        );
+        login.waitForErrorNotice();
+        assertTrue(login.isErrorVisible(), "Error should appear.");
+        assertTrue(login.isFormVisible(), "Login form stays visible.");
         assertTrue(context.page.url().contains("mein-konto"),
-                "Should stay on /mein-konto");
+                "User must remain on /mein-konto");
+        System.out.println(">>> Error text: " + login.getErrorMessage());
+        assertTrue(
+                login.errorContainsAny(
+                        "Benutzername", "E-Mail", "email", "username",
+                        "existiert", "exist", "kein", "keine", "Konto", "account"
+                ),
+                "Error should indicate unknown email/username"
+        );
     }
 
     @Test
     @DisplayName("Login fails with empty username shows error and stays on login page")
     void loginFailsWithEmptyUsername_noTextCheck() {
         LoginPage login = new LoginPage(context);
+
         login.openLoginPage();
         login.enterPassword("AnyPassword123!");
         login.submit();
+        login.waitForErrorNotice();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
         assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
+        assertTrue(login.errorContainsAny("Benutzername", "username"),
+                "Error should mention username");
+        assertTrue(login.errorContainsAny("erforderlich", "required", "leer", "empty"),
+                "Error should indicate requirement/emptiness");
     }
 
     @Test
     @DisplayName("Login fails with empty password shows error and stays on login page")
     void loginFailsWithEmptyPassword_noTextCheck() {
         LoginPage login = new LoginPage(context);
+
         login.openLoginPage();
         login.enterUsername(utils.ConfigurationReader.get("email"));
         login.submit();
+        login.waitForErrorNotice();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
         assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
+        assertTrue(login.errorContainsAny("Passwort", "password"),
+                "Error should mention password");
+        assertTrue(login.errorContainsAny("erforderlich", "required", "leer", "empty"),
+                "Error should indicate requirement/emptiness");
     }
 
     @Test
     @DisplayName("Login fails with both fields empty shows error and stays on login page")
     void loginFailsWithBothEmpty_noTextCheck() {
         LoginPage login = new LoginPage(context);
+
         login.openLoginPage();
         login.submit();
+        login.waitForErrorNotice();
         assertTrue(login.isErrorVisible(), "Error block should be visible");
         assertTrue(login.isFormVisible(), "Login form must remain visible");
         assertTrue(context.page.url().contains("mein-konto"),
                 "Should stay on /mein-konto");
+        assertTrue(login.errorContainsAny("Benutzername", "username"),
+                "Error should mention username");
+        assertTrue(login.errorContainsAny("erforderlich", "required", "leer", "empty"),
+                "Error should indicate requirement/emptiness");
     }
 
     @Test
