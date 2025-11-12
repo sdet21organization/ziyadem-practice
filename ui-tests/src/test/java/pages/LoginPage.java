@@ -5,25 +5,25 @@ import context.TestContext;
 import io.qameta.allure.Step;
 
 public class LoginPage extends BasePage {
-
     private final String usernameInput;
     private final String passwordInput;
     private final String submitButton;
     private final String rememberMeCheckbox;
     private final String forgotPasswordLink;
-    private final String errorMessage;
     private final String showPasswordBtn;
+    private final String errorContainer;
+    private final String errorItemText;
 
     public LoginPage(TestContext context) {
         super(context);
-
         this.usernameInput = "#username";
         this.passwordInput = "#password";
         this.submitButton = "button[name='login']";
         this.rememberMeCheckbox = "#rememberme";
         this.forgotPasswordLink = "a[href*='lost-password']";
-        this.errorMessage = "ul.woocommerce-error";
-        this.showPasswordBtn = " button.show-password-input";
+        this.showPasswordBtn = "button.show-password-input";
+        this.errorContainer = "ul.woocommerce-error";
+        this.errorItemText = "ul.woocommerce-error li";
     }
 
     @Step("Open Login page")
@@ -71,9 +71,9 @@ public class LoginPage extends BasePage {
         click(forgotPasswordLink);
     }
 
-    @Step("Check login error is visible")
+    @Step("Login error notice is visible")
     public boolean isErrorVisible() {
-        return context.page.isVisible(errorMessage);
+        return context.page.isVisible(errorContainer);
     }
 
     @Step("User is logged in")
@@ -105,4 +105,26 @@ public class LoginPage extends BasePage {
                 new Locator.WaitForOptions().setTimeout(5000)
         );
     }
+
+    @Step("Wait for error notice to appear")
+    public void waitForErrorNotice() {
+        context.page.locator(errorContainer)
+                .waitFor(new Locator.WaitForOptions().setTimeout(5000));
+    }
+
+    @Step("Get error message text")
+    public String getErrorMessage() {
+        String text = context.page.textContent(errorItemText);
+        return text == null ? "" : text.trim();
+    }
+
+    @Step("Error text contains any of: {words}")
+    public boolean errorContainsAny(String... words) {
+        String text = getErrorMessage().toLowerCase();
+        for (String w : words) {
+            if (text.contains(w.toLowerCase())) return true;
+        }
+        return false;
+    }
+
 }
