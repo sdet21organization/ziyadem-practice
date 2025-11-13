@@ -7,7 +7,6 @@ import utils.ConfigurationReader;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
-
 public abstract class BasePage {
 
     protected final TestContext context;
@@ -71,5 +70,28 @@ public abstract class BasePage {
     public void waitForTableRowCount(String tableSelector, int expectedCount) {
         Locator rows = getLocator(tableSelector);
         assertThat(rows).hasCount(expectedCount);
+    }
+
+    @Step("Accept cookies if present")
+    public void acceptCookiesIfPresent() {
+        String[] selectors = new String[]{
+                "button:has-text('Alle akzeptieren')",
+                "button:has-text('Akzeptieren')",
+                "button:has-text('Zustimmen')",
+                "#cmplz-accept",
+                ".cmplz-accept",
+                ".cky-btn-accept",
+                ".cc-allow",
+                "#onetrust-accept-btn-handler"
+        };
+        for (String s : selectors) {
+            try {
+                Locator btn = context.page.locator(s).first();
+                if (btn.isVisible()) {
+                    btn.click();
+                    break;
+                }
+            } catch (Exception ignored) {}
+        }
     }
 }
