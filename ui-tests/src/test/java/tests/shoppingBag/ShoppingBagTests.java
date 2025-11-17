@@ -170,4 +170,37 @@ public class ShoppingBagTests extends BaseTest {
                 .addProductToShoppingBag()
                 .hoverToShoppingBagAndVerifyMiniCartPopup();
     }
+
+    @Test
+    @DisplayName("Correct total calculation")
+    public void verifyTotalCalculationInShoppingBag() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .addSomeProductsToShoppingBag()
+                .verifyTotalAmountInShoppingBag();
+    }
+
+    @Test
+    @DisplayName("Return item to cart after removing")
+    public void returnItemToShoppingBag() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .getItemsInShoppingBag()
+                .removeItemFromShoppingBag()
+                .verifyShoppingBagIsEmpty()
+                .returnItemToShoppingBag()
+                .verifyItemsInShoppingBagAfterReturn();
+    }
+
+    @Test
+    @DisplayName("Shopping cart icon is clickable")
+    public void verifyShoppingCartIconClickable() {
+        new StartPage(context)
+                .openStartPage()
+                .clickShoppingBagIconAndVerify();
+    }
+
 }
