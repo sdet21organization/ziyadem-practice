@@ -1,1 +1,1 @@
-{"total":2,"items":[{"uid":"5a67f2f1a5e40bafcb1a9efdf8bd7846","name":"ZIYAD-4 Search Icon Function","statistic":{"failed":0,"broken":0,"skipped":0,"passed":5,"unknown":0,"total":5}},{"uid":"9d55992b7a44eab4c22dbc2c42e2c602","name":"UI Tests","statistic":{"failed":0,"broken":0,"skipped":0,"passed":4,"unknown":0,"total":4}}]}
+{"total":1,"items":[{"uid":"9d55992b7a44eab4c22dbc2c42e2c602","name":"UI Tests","statistic":{"failed":0,"broken":0,"skipped":0,"passed":5,"unknown":0,"total":5}}]}
