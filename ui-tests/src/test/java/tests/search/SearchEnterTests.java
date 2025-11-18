@@ -4,7 +4,7 @@ import io.qameta.allure.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.BasePage;
-import pages.LoginPage;
+import pages.login.LoginPage;
 import pages.search.SearchResultsPage;
 import tests.BaseTest;
 import utils.ConfigurationReader;

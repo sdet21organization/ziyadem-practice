@@ -5,6 +5,7 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import context.TestContext;
 import io.qameta.allure.Step;
 import pages.BasePage;
+import pages.login.LoginPage;
 import utils.ConfigurationReader;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 public class Header extends BasePage {
 
     private final Locator accountButton;
+    private final Locator accountButtonLogged;
     private final Locator searchInput;
     private final Locator predictiveContainer;
     private final Locator predictiveItems;
@@ -20,6 +22,7 @@ public class Header extends BasePage {
     public Header(TestContext context) {
         super(context);
         this.accountButton = context.page.locator("a[data-open=\"#login-form-popup\"]");
+        this.accountButtonLogged = context.page.locator(".header-button .account-link");
         this.searchInput = context.page.locator("input[type='search'], input[name='s']");
         this.predictiveContainer = context.page.locator(".autocomplete-suggestions, .live-search-results, ul.search-results");
         this.predictiveItems = context.page.locator(".autocomplete-suggestion, .autocomplete-suggestions li, .live-search-results li, ul.search-results li");
@@ -30,15 +33,22 @@ public class Header extends BasePage {
         accountButton.click();
     }
 
+    @Step("Click 'Account' button as logged in user")
+    public void clickAccountButtonLogged() {
+        accountButtonLogged.click();
+    }
+
     @Step("Login as default user via page")
     public void loginAsDefaultUser() {
-        pages.LoginPage lp = new pages.LoginPage(context);
+        LoginPage lp = new LoginPage(context);
         lp.openLoginPage();
         acceptCookiesIfPresent();
         lp.submitWith(ConfigurationReader.get("email"), ConfigurationReader.get("password"));
+
         context.page.locator("body.logged-in, .woocommerce-MyAccount-navigation, a[href*='customer-logout']")
                 .first()
                 .waitFor(new Locator.WaitForOptions().setTimeout(25000));
+
         context.page.navigate(ConfigurationReader.get("URL"));
         acceptCookiesIfPresent();
     }

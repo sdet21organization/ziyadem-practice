@@ -1,8 +1,9 @@
-package pages;
+package pages.login;
 
 import com.microsoft.playwright.Locator;
 import context.TestContext;
 import io.qameta.allure.Step;
+import pages.BasePage;
 
 public class LoginPage extends BasePage {
     private final String usernameInput;
