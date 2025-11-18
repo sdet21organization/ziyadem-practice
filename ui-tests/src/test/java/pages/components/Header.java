@@ -5,6 +5,7 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import context.TestContext;
 import io.qameta.allure.Step;
 import pages.BasePage;
+import pages.login.LoginPage;
 import utils.ConfigurationReader;
 
 import java.util.ArrayList;
@@ -39,13 +40,15 @@ public class Header extends BasePage {
 
     @Step("Login as default user via page")
     public void loginAsDefaultUser() {
-        pages.LoginPage lp = new pages.LoginPage(context);
+        LoginPage lp = new LoginPage(context);
         lp.openLoginPage();
         acceptCookiesIfPresent();
         lp.submitWith(ConfigurationReader.get("email"), ConfigurationReader.get("password"));
+
         context.page.locator("body.logged-in, .woocommerce-MyAccount-navigation, a[href*='customer-logout']")
                 .first()
                 .waitFor(new Locator.WaitForOptions().setTimeout(25000));
+
         context.page.navigate(ConfigurationReader.get("URL"));
         acceptCookiesIfPresent();
     }

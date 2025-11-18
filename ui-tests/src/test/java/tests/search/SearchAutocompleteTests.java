@@ -6,6 +6,7 @@ import io.qameta.allure.Owner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.BasePage;
+import pages.login.LoginPage;
 import pages.components.Header;
 import tests.BaseTest;
 import java.util.List;
