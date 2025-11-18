@@ -75,4 +75,33 @@ public class ProfilePage extends BasePage {
         errorMessages.first().waitFor();
         return errorMessages.first().innerText().trim();
     }
+
+    @Step("Get First Name value")
+    public String getFirstName() {
+        return firstNameInput.inputValue();
+    }
+
+    @Step("Get Last Name value")
+    public String getLastName() {
+        return lastNameInput.inputValue();
+    }
+
+    @Step("Get Display Name value")
+    public String getDisplayName() {
+        return displayNameInput.inputValue();
+    }
+
+    @Step("Get Email value")
+    public String getEmail() {
+        return emailInput.inputValue();
+    }
+
+    @Step("Get all profile field values")
+    public ProfileValues getValues() {
+        String first = firstNameInput.inputValue();
+        String last = lastNameInput.inputValue();
+        String display = displayNameInput.inputValue();
+        String email = emailInput.inputValue();
+        return new ProfileValues(first, last, display, email);
+    }
 }
