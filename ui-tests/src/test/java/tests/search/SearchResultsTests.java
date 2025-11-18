@@ -1,8 +1,10 @@
 package tests.search;
 
-import io.qameta.allure.*;
-import org.junit.jupiter.api.AfterEach;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import pages.BasePage;
 import pages.components.Header;
@@ -11,8 +13,8 @@ import tests.BaseTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Epic("ZIYAD-4 Search Icon Function")
-@Feature("Search results list")
+@Epic("UI Tests")
+@Feature("Search")
 @Owner("Kostiantyn Herasymets")
 @DisplayName("Search results display")
 public class SearchResultsTests extends BaseTest {
@@ -23,7 +25,8 @@ public class SearchResultsTests extends BaseTest {
     void ensureGuestAfterTest() {
         try {
             new Header(context).logoutIfLoggedIn();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     @Test
@@ -53,7 +56,6 @@ public class SearchResultsTests extends BaseTest {
 
         Header header = new Header(context);
         header.loginAsDefaultUser();
-
         header.typeSearch(KEYWORD);
         header.pressEnter();
 
