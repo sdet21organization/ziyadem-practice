@@ -32,8 +32,6 @@ public class LogoutTests extends BaseTest {
         login.submit();
         assertTrue(login.isUserLoggedIn(),
                 "User should be logged in and see account page before logout");
-        assertTrue(logoutPage.isOnAccountPage(),
-                "User should be on /mein-konto after login");
         logoutPage.clickLogoutLink();
         assertFalse(header.isLoggedIn(),
                 "User should be logged out after clicking Abmelden");

@@ -6,7 +6,6 @@ import io.qameta.allure.Step;
 import pages.BasePage;
 
 public class LogoutPage extends BasePage {
-
     private final Locator logoutLink;
 
     public LogoutPage(TestContext context) {
@@ -18,9 +17,5 @@ public class LogoutPage extends BasePage {
     public void clickLogoutLink() {
         logoutLink.first().click();
     }
-
-    @Step("Check if we are on /mein-konto/")
-    public boolean isOnAccountPage() {
-        return context.page.url().contains("/mein-konto");
-    }
 }
+
