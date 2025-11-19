@@ -1,6 +1,6 @@
 package pages.shoppingBag;
 
-public class ShoppingBagElements {
+public class ShoppingBagPageElements {
     public static final String SHOPPING_BAG_TABLE = "//table[@class='shop_table shop_table_responsive cart woocommerce-cart-form__contents']";
     public static final String ROW_IN_SHOPPING_BAG_TABLE = "//table[@class='shop_table shop_table_responsive cart woocommerce-cart-form__contents']/tbody/tr";
     public static final String REMOVE_ITEM_FROM_SHOPPING_BAG_BUTTON = "//td[@class='product-remove']//a";
@@ -17,4 +17,5 @@ public class ShoppingBagElements {
     public static final String SUCCESS_DELETION_MESSAGE = "//font[contains(text(), 'entfernt')]";
     public static final String SHOPPING_BAG_IS_EMPTY_MESSAGE = "//font[contains(text(), 'Dein Warenkorb ist gegenwärtig leer')]";
     public static final String RETURN_TO_SHOP_BUTTON = "//p[@class='return-to-shop']";
+    public static final String PROCEED_TO_CHECKOUT_BUTTON = "//div[@class='wc-proceed-to-checkout']";
 }
