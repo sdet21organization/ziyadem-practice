@@ -104,4 +104,9 @@ public class ProfilePage extends BasePage {
         String email = emailInput.inputValue();
         return new ProfileValues(first, last, display, email);
     }
+
+    @Step("Get native email validation message")
+    public String getEmailValidationMessage() {
+        return (String) emailInput.evaluate("el => el.validationMessage");
+    }
 }

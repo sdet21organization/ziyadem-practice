@@ -4,15 +4,17 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Owner;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.accountDetails.ProfilePage;
 import pages.accountDetails.ProfileValues;
 import pages.wishlist.AuthSteps;
 import tests.BaseTest;
+import utils.ConfigurationReader;
+import utils.TestData;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Epic("UI Tests")
 @Feature("Account Details")
@@ -96,58 +98,118 @@ public class ProfileTests extends BaseTest {
     @Test
     @DisplayName("Trim First Name")
     void trimFirstName() {
-        profilePage.setFirstName("   Leonid   ");
+        String firstName = TestData.randomFirstName();
+        String withSpaces = "   " + firstName + "   ";
+        profilePage.setFirstName(withSpaces);
         String value = profilePage.getFirstName();
         String success = profilePage.getSuccessMessage();
         assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
-        assertEquals("Leonid", value, "Wrong trimmed value");
+        assertEquals(firstName, value, "Wrong trimmed value");
     }
 
     @Test
     @DisplayName("Trim Last Name")
     void trimLastName() {
-        profilePage.setLastName("   Testoff   ");
-        String value = profilePage.getLastName();
+        String lastName = TestData.randomLastName();
+        String withSpaces = "   " + lastName + "   ";
+        profilePage.setLastName(withSpaces);
+        String actual = profilePage.getLastName();
         String success = profilePage.getSuccessMessage();
         assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
-        assertEquals("Testoff", value, "Wrong trimmed value");
+        assertEquals(lastName, actual, "Wrong trimmed value");
+
     }
 
     @Test
     @DisplayName("Trim Display Name")
     void trimDisplayName() {
-        profilePage.setDisplayName("   Test User   ");
-        String value = profilePage.getDisplayName();
+        String firstName = TestData.randomFirstName();
+        String lastName = TestData.randomLastName();
+        String displayName = firstName + " " + lastName;
+        String withSpaces = "   " + displayName + "   ";
+        profilePage.setDisplayName(withSpaces);
+        String actual = profilePage.getDisplayName();
         String success = profilePage.getSuccessMessage();
         assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
-        assertEquals("Test User", value, "Wrong trimmed value");
+        assertEquals(displayName, actual, "Wrong trimmed value");
     }
 
     @Test
     @DisplayName("Trim Email")
     void trimEmail() {
-        profilePage.setEmail("   my_test_email_rrr253010@mailnesia.com   ");
-        String value = profilePage.getEmail();
+        String email = ConfigurationReader.get("email");
+        String withSpaces = "   " + email + "   ";
+        profilePage.setEmail(withSpaces);
+        String actual = profilePage.getEmail();
         String success = profilePage.getSuccessMessage();
         assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
-        assertEquals("my_test_email_rrr253010@mailnesia.com", value, "Wrong trimmed value");
+        assertEquals(email, actual, "Wrong trimmed value");
     }
+
 
     @Test
     @DisplayName("Trim All Fields")
     void trimAllFields() {
-        profilePage.setAllFields(
-                "   Leonid   ",
-                "   Testoff   ",
-                "   Leonid Testoff   ",
-                "   my_test_email_rrr253010@mailnesia.com   "
-        );
+        String firstName = TestData.randomFirstName();
+        String lastName = TestData.randomLastName();
+        String displayName = firstName + " " + lastName;
+        String email = ConfigurationReader.get("email");
+        String spacedFirst = "   " + firstName + "   ";
+        String spacedLast = "   " + lastName + "   ";
+        String spacedDisplay = "   " + displayName + "   ";
+        String spacedEmail = "   " + email + "   ";
+        profilePage.setAllFields(spacedFirst, spacedLast, spacedDisplay, spacedEmail);
         ProfileValues values = profilePage.getValues();
         String success = profilePage.getSuccessMessage();
         assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
-        assertEquals("Leonid", values.first, "Wrong trimmed First Name");
-        assertEquals("Testoff", values.last, "Wrong trimmed Last Name");
-        assertEquals("Leonid Testoff", values.display, "Wrong trimmed Display Name");
-        assertEquals("my_test_email_rrr253010@mailnesia.com", values.email, "Wrong trimmed Email");
+        assertEquals(firstName, values.first, "Wrong trimmed First Name");
+        assertEquals(lastName, values.last, "Wrong trimmed Last Name");
+        assertEquals(displayName, values.display, "Wrong trimmed Display Name");
+        assertEquals(email, values.email, "Wrong trimmed Email");
+    }
+
+
+    @Test
+    @Disabled("Known bug ZIYAD-61: First Name accepts only special characters and saves successfully")
+    @DisplayName("Special characters in First Name")
+    void charsInFirstName() {
+        String invalid = "@#$%^&*";
+        profilePage.setFirstName(invalid);
+        String error = profilePage.getErrorMessage();
+
+        // TODO: Replace expected message after bug fix
+        assertTrue(error.contains("Ungültiger Vorname."), "Actual text: " + error);
+    }
+
+    @Test
+    @Disabled("Known bug ZIYAD-62: Last Name accepts only special characters and saves successfully")
+    @DisplayName("Special characters in Last Name")
+    void charsInLastName() {
+        String invalid = "@#$%^&*";
+        profilePage.setLastName(invalid);
+        String error = profilePage.getErrorMessage();
+
+        // TODO: Replace expected message after bug fix
+        assertTrue(error.contains("Ungültiger Nachname."), "Actual text: " + error);
+    }
+
+    @Test
+    @DisplayName("Special characters in Display Name")
+    void charsInDisplayName() {
+        String invalid = "@#$%^&*";
+        profilePage.setDisplayName(invalid);
+        String actual = profilePage.getDisplayName();
+        String success = profilePage.getSuccessMessage();
+        assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual text: " + success);
+        assertEquals(invalid, actual, "Display Name was not saved correctly");
+    }
+
+    @Test
+    @DisplayName("Special characters in Email")
+    void specialCharsInEmail() {
+        String invalid = "@#$%^&*";
+        profilePage.setEmail(invalid);
+        String msg = profilePage.getEmailValidationMessage();
+        assertFalse(msg.isEmpty(), "Expected browser validation message but got empty string");
     }
 }
