@@ -18,14 +18,21 @@ public class Header extends BasePage {
     private final Locator searchInput;
     private final Locator predictiveContainer;
     private final Locator predictiveItems;
+    private final Locator accountMenu;
+    private final Locator dropdownLogoutLink;
 
     public Header(TestContext context) {
         super(context);
+
         this.accountButton = context.page.locator("a[data-open=\"#login-form-popup\"]");
         this.accountButtonLogged = context.page.locator(".header-button .account-link");
         this.searchInput = context.page.locator("input[type='search'], input[name='s']");
         this.predictiveContainer = context.page.locator(".autocomplete-suggestions, .live-search-results, ul.search-results");
         this.predictiveItems = context.page.locator(".autocomplete-suggestion, .autocomplete-suggestions li, .live-search-results li, ul.search-results li");
+        this.accountMenu =
+                context.page.locator("li.account-item.has-icon.has-dropdown");
+        this.dropdownLogoutLink =
+                context.page.locator("li.woocommerce-MyAccount-navigation-link--customer-logout a");
     }
 
     @Step("Click 'Account' button")
@@ -33,7 +40,7 @@ public class Header extends BasePage {
         accountButton.click();
     }
 
-    @Step("Click 'Account' button as logged in user")
+    @Step("Click 'Account' button as logged-in user")
     public void clickAccountButtonLogged() {
         accountButtonLogged.click();
     }
@@ -110,9 +117,11 @@ public class Header extends BasePage {
             acceptCookiesIfPresent();
             return;
         }
+
         String base = ConfigurationReader.get("URL");
         context.page.navigate(base + "mein-konto/");
         acceptCookiesIfPresent();
+
         Locator logout = context.page.locator("a[href*='customer-logout']");
         if (logout.count() > 0) {
             logout.first().click();
@@ -124,7 +133,20 @@ public class Header extends BasePage {
             context.page.context().clearCookies();
             context.page.reload();
         }
+
         context.page.navigate(base);
         acceptCookiesIfPresent();
     }
+
+    @Step("Hover account icon to open dropdown")
+    public void hoverUserIcon() {
+        accountMenu.hover();
+        context.page.waitForTimeout(400);
+    }
+
+    @Step("Click logout (melde) inside header dropdown (JS click, не уводя мышь)")
+    public void clickLogoutInDropdown() {
+        dropdownLogoutLink.first().evaluate("el => el.click()");
+    }
+
 }

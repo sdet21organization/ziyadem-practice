@@ -19,8 +19,5 @@ public class LogoutPage extends BasePage {
         logoutLink.first().click();
     }
 
-    @Step("Check if we are on /mein-konto/")
-    public boolean isOnAccountPage() {
-        return context.page.url().contains("/mein-konto");
-    }
 }
+
