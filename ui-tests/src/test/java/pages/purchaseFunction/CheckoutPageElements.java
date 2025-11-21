@@ -16,7 +16,7 @@ public class CheckoutPageElements {
     public static final String SHIP_TO_DIFFERENT_ADDRESS_CHECKBOX = "//input[@name='ship_to_different_address']";
     public static final String COMMENTS_TEXTAREA = "//textarea[@name='order_comments']";
     public static final String PLACE_ORDER_BUTTON = "//button[@id='place_order']";
-    public static final String REQUIRED_FIELDS_ERROR_ALERT = "//div[contains(@class, 'message-container') and contains(., 'ist ein Pflichtfeld')]";
+    public static final String REQUIRED_FIELDS_ERROR_ALERT = "//div[@class='woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout']";
     public static final String REQUIRED_FIELD_EMAIL_ALERT = "//li[@data-id='billing_email']";
     public static final String REQUIRED_FIELD_FIRST_NAME_ALERT = "//li[@data-id='billing_first_name']";
     public static final String REQUIRED_FIELD_LAST_NAME_ALERT = "//li[@data-id='billing_last_name']";
@@ -31,6 +31,4 @@ public class CheckoutPageElements {
     public static final String PAYPAL_METHOD_MESSAGE = "//p[contains(text(), 'Paypal')]";
     public static final String TOTAL_AMOUNT_ON_CHECKOUT_PAGE = "//tr[@class='order-total']//span[@class='woocommerce-Price-amount amount'][1]";
     public static final String CONFIRM_LEGAL_CHECKBOX = "//input[@id='legal']";
-    public static final String ORDER_CONFIRMATION_PAGE_TITLE = "//font[contains(text(), 'Bestellung abgeschlossen ')]";
-    public static final String SUCCESSFUL_ORDER_CREATION_MESSAGE = "//font[contains(text(), 'Vielen Dank. Deine Bestellung ist eingegangen.')]";
 }

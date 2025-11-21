@@ -65,7 +65,8 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
                 .addProductToShoppingBag()
                 .goToShoppingBagPage()
                 .proceedToCheckout()
-                .confirmOrderWithAllEmptyFieldsAndValidate();
+                .confirmOrder()
+                .validateAllEmptyFields();
     }
 
     static Stream<Object[]> requiredFields() {
@@ -105,6 +106,55 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
                 .proceedToCheckout()
                 .fillAllRequiredFields()
                 .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
-                .confirmOrderAndVerifyOrderReceivedPageIsOpened();
+                .confirmOrder()
+                .verifyOrderReceivedPageIsOpened();
+    }
+
+    @Test
+    @DisplayName("Verify Order Confirmation Page contains Bank Details for Direct Bank Transfer")
+    public void verifyBankDetailsOnConfirmationPage() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
+                .confirmOrderAndGoToOrderConfirmationPage()
+                .verifyBankDetailsAreDisplayedOnOrderConfirmationPage();
+    }
+
+    @Test
+    @DisplayName("Verify order information on Order Confirmation Page")
+    public void verifyOrderInformation() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
+                .getTotalAmountFromCheckoutPage()
+                .confirmOrderAndGoToOrderConfirmationPage()
+                .verifyOrderInformationIsCorrect();
+    }
+
+    @Test
+    @DisplayName("Verify order details on Order Confirmation Page")
+    public void verifyOrderDetails() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .getItemsInShoppingBag()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
+                .getTotalAmountFromCheckoutPage()
+                .confirmOrderAndGoToOrderConfirmationPage()
+                .verifyOrderDetailsOnCofirmationPage();
     }
 }
