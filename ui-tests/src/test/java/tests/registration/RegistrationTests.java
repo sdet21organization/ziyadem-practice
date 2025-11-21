@@ -17,6 +17,7 @@ import utils.ConfigurationReader;
 
 @Epic("UI Tests")
 @Feature("User Registration")
+@DisplayName("Check user registration functionality")
 public class RegistrationTests extends BaseTest {
 
     @Test
