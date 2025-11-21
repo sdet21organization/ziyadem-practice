@@ -1,33 +1,31 @@
 package tests.search;
 
-import io.qameta.allure.*;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Owner;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.BasePage;
-import pages.LoginPage;
+import pages.login.LoginPage;
+import pages.components.Header;
 import pages.product.ProductDetailsPage;
 import pages.search.SearchResultsPage;
 import tests.BaseTest;
-import utils.ConfigurationReader;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Epic("ZIYAD-4 Search Icon Function")
-@Feature("PDP navigation from search results")
+@Epic("UI Tests")
+@Feature("Search")
 @Owner("Kostiantyn Herasymets")
 @DisplayName("Open correct PDP from search results")
 public class SearchPdpNavigationTests extends BaseTest {
 
     private static final String KEYWORD = "manuka";
-    private static final String SEARCH_INPUT = "input[type='search'], input[name='s']";
 
     @Test
     @DisplayName("Guest user: first search result opens correct PDP")
     public void guest_click_opens_correct_pdp() {
-        openHomeAndAcceptCookies();
-
-        typeSearch(KEYWORD);
-        pressEnter();
+        searchAsGuest(KEYWORD);
 
         SearchResultsPage results = new SearchResultsPage(context);
         results.waitLoaded();
@@ -41,20 +39,23 @@ public class SearchPdpNavigationTests extends BaseTest {
 
         assertTrue(normText(pdp.getTitle()).contains(normText(listTitle)));
         if (!listPrice.isEmpty() && !pdp.getPriceText().isEmpty()) {
-            assertTrue(normPrice(pdp.getPriceText()).contains(normPrice(listPrice)) || normPrice(listPrice).contains(normPrice(pdp.getPriceText())));
+            assertTrue(
+                    normPrice(pdp.getPriceText()).contains(normPrice(listPrice)) ||
+                            normPrice(listPrice).contains(normPrice(pdp.getPriceText()))
+            );
         }
         if (!listImg.isEmpty() && !pdp.getMainImageSrc().isEmpty()) {
-            assertTrue(normImg(pdp.getMainImageSrc()).contains(normImg(listImg)) || normImg(listImg).contains(normImg(pdp.getMainImageSrc())));
+            assertTrue(
+                    normImg(pdp.getMainImageSrc()).contains(normImg(listImg)) ||
+                            normImg(listImg).contains(normImg(pdp.getMainImageSrc()))
+            );
         }
     }
 
     @Test
     @DisplayName("Logged-in user: first search result opens correct PDP")
     public void loggedin_click_opens_correct_pdp() {
-        loginAsDefaultUser();
-
-        typeSearch(KEYWORD);
-        pressEnter();
+        searchAsLoggedIn(KEYWORD);
 
         SearchResultsPage results = new SearchResultsPage(context);
         results.waitLoaded();
@@ -68,35 +69,38 @@ public class SearchPdpNavigationTests extends BaseTest {
 
         assertTrue(normText(pdp.getTitle()).contains(normText(listTitle)));
         if (!listPrice.isEmpty() && !pdp.getPriceText().isEmpty()) {
-            assertTrue(normPrice(pdp.getPriceText()).contains(normPrice(listPrice)) || normPrice(listPrice).contains(normPrice(pdp.getPriceText())));
+            assertTrue(
+                    normPrice(pdp.getPriceText()).contains(normPrice(listPrice)) ||
+                            normPrice(listPrice).contains(normPrice(pdp.getPriceText()))
+            );
         }
         if (!listImg.isEmpty() && !pdp.getMainImageSrc().isEmpty()) {
-            assertTrue(normImg(pdp.getMainImageSrc()).contains(normImg(listImg)) || normImg(listImg).contains(normImg(pdp.getMainImageSrc())));
+            assertTrue(
+                    normImg(pdp.getMainImageSrc()).contains(normImg(listImg)) ||
+                            normImg(listImg).contains(normImg(pdp.getMainImageSrc()))
+            );
         }
     }
 
-    private void openHomeAndAcceptCookies() {
+    private void searchAsGuest(String query) {
         BasePage base = new BasePage(context) {};
         base.open();
         base.acceptCookiesIfPresent();
+
+        Header header = new Header(context);
+        header.typeSearch(query);
+        header.pressEnter();
     }
 
-    private void loginAsDefaultUser() {
-        LoginPage lp = new LoginPage(context);
-        lp.openLoginPage();
-        new BasePage(context) {}.acceptCookiesIfPresent();
-        lp.submitWith(ConfigurationReader.get("email"), ConfigurationReader.get("password"));
-        context.page.locator("body.logged-in, .woocommerce-MyAccount-navigation, a[href*='customer-logout']").first().waitFor();
-        openHomeAndAcceptCookies();
-    }
+    private void searchAsLoggedIn(String query) {
+        BasePage base = new BasePage(context) {};
+        base.open();
+        base.acceptCookiesIfPresent();
 
-    private void typeSearch(String text) {
-        context.page.locator(SEARCH_INPUT).first().click();
-        context.page.locator(SEARCH_INPUT).first().fill(text);
-    }
-
-    private void pressEnter() {
-        context.page.locator(SEARCH_INPUT).first().press("Enter");
+        Header header = new Header(context);
+        header.loginAsDefaultUser();
+        header.typeSearch(query);
+        header.pressEnter();
     }
 
     private static String normText(String s) {

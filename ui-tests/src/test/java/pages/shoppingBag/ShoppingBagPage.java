@@ -20,6 +20,7 @@ public class ShoppingBagPage extends BasePage {
 
     private final List<String> productNameList;
     private final List<String> productPriceList;
+    private List<String> expectedProductNameList = new ArrayList<>();
 
     public ShoppingBagPage(TestContext context) {
         this(context, null, null);
@@ -59,6 +60,17 @@ public class ShoppingBagPage extends BasePage {
         return this;
     }
 
+    @Step("Get items in shopping bag")
+    public ShoppingBagPage getItemsInShoppingBag() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        int itemCount = getLocator(ROW_IN_SHOPPING_BAG_TABLE).count() - 1;
+        for (int i = 0; i < itemCount; i++) {
+            expectedProductNameList.add(getText(ITEM_NAME_IN_SHOPPING_BAG_TABLE, i).trim());
+        }
+        return this;
+    }
+
     @Step("Verify amount in shopping bag")
     public void verifyAmountInShoppingBag() {
         String expectedAmount = productPriceList.stream()
@@ -68,6 +80,21 @@ public class ShoppingBagPage extends BasePage {
         expectedAmount = new DecimalFormat("0.00").format(Double.parseDouble(expectedAmount));
         String actualAmount = getText(AMOUNT_IN_SHOPPING_BAG).replaceAll("[^0-9.,]", "").trim();
         assertEquals(expectedAmount, actualAmount,
+                "Total amount in shopping bag does not match expected amount");
+    }
+
+    @Step("Verify total amount in shopping bag")
+    public void verifyTotalAmountInShoppingBag() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        String actualTotalAmount = getText(TOTAL_AMOUNT_IN_SHOPPING_BAG, 0).replaceAll("[^0-9.,]", "").trim();
+        String actualShippingCost = getText(SHIPPING_COST_IN_SHOPPING_BAG).replaceAll("[^0-9.,]", "").trim();
+        String expectedAmount = productPriceList.stream()
+                .map(price -> price.replace(",", "."))
+                .mapToDouble(Double::parseDouble)
+                .sum() + "";
+        String expectedTotalAmount = new DecimalFormat("0.00").format(Double.parseDouble(expectedAmount)
+                + Double.parseDouble(actualShippingCost.replace(",", ".")));
+        assertEquals(expectedTotalAmount, actualTotalAmount,
                 "Total amount in shopping bag does not match expected amount");
     }
 
@@ -90,22 +117,44 @@ public class ShoppingBagPage extends BasePage {
 
     @Step("Remove item from shopping bag")
     public ShoppingBagPage removeItemFromShoppingBag() {
-        click(REMOVE_ITEM_FROM_SHOPPING_BAG_TABLE);
+        click(REMOVE_ITEM_FROM_SHOPPING_BAG_BUTTON);
         waitForVisibility(SUCCESS_DELETION_MESSAGE);
         return this;
     }
 
-    @Step("Verify shopping bag is empty")
-    public void verifyShoppingBagIsEmpty() {
-        waitForVisibility(SHOPPING_BAG_IS_EMPTY_MESSAGE);
+    @Step("Return item to shopping bag")
+    public ShoppingBagPage returnItemToShoppingBag() {
+        click(RETURN_ITEM_TO_SHOPPING_BAG_BUTTON);
+        waitForTableRowCount(ROW_IN_SHOPPING_BAG_TABLE, 2);
+        return this;
+    }
+
+    @Step("Verify items in shopping bag after return")
+    public void verifyItemsInShoppingBagAfterReturn() {
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        List<String> actualProductNameList = new ArrayList<>();
+
+        int itemCount = getLocator(ROW_IN_SHOPPING_BAG_TABLE).count() - 1;
+        for (int i = 0; i < itemCount; i++) {
+            actualProductNameList.add(getText(ITEM_NAME_IN_SHOPPING_BAG_TABLE, i).trim());
+        }
+
+        assertEquals(expectedProductNameList, actualProductNameList,
+                "Product names in shopping bag do not match the returned products");
+    }
+
+    @Step("Verify shopping bag is empty")
+    public ShoppingBagPage verifyShoppingBagIsEmpty() {
+        context.page.waitForTimeout(2000);
+        waitForVisibility(SHOPPING_BAG_IS_EMPTY_MESSAGE);
         assertTrue(getLocator(String.format(PRODUCT_QUANTITY_IN_SHOPPING_BAG_ICON, "0"), 0).isVisible(),
                 "Product quantity in shopping bag icon is not zero after removing the item");
+        return this;
     }
 
     @Step("Remove item and verify shopping bag message")
     public void removeItemAndVerifyShoppingBagMessage() {
-        click(REMOVE_ITEM_FROM_SHOPPING_BAG_TABLE);
+        click(REMOVE_ITEM_FROM_SHOPPING_BAG_BUTTON);
         waitForVisibility(SUCCESS_DELETION_MESSAGE);
         assertTrue(getLocator(SHOPPING_BAG_IS_EMPTY_MESSAGE).isVisible(),
                 "Message about empty shopping bag is not displayed after removing the item");
@@ -164,7 +213,7 @@ public class ShoppingBagPage extends BasePage {
     }
 
     @Step("Verify product added to shopping bag")
-    public ShoppingBagPage verifyProductPricesInShoppingBag() {
+    public void verifyProductPricesInShoppingBag() {
         waitForVisibility(SHOPPING_BAG_TABLE);
         waitForTableRowCount(ROW_IN_SHOPPING_BAG_TABLE, (productPriceList.size() + 1));
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
@@ -175,7 +224,6 @@ public class ShoppingBagPage extends BasePage {
             assertEquals(expectedPrice, actualPrice,
                     "Product price in shopping cart does not match the added product");
         }
-        return this;
     }
 
     @Step("Remove item from shopping bag with counter")
