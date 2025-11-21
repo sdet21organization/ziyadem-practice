@@ -10,7 +10,7 @@ public class LoginModal extends BasePage {
     public final Locator loginFormPopup;
     private final Locator usernameInput;
     private final Locator passwordInput;
-    private final Locator loginButton;
+    public final Locator loginButton;
     public final Locator emailInput;
     private final Locator registrationButton;
     public final Locator errorMessage;
