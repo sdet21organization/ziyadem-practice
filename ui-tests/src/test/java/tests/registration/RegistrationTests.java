@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import pages.components.Header;
 import pages.components.LoginModal;
-import pages.myAccount.MyAccountPage;
+import pages.account.MyAccountPage;
 import testdata.UserRegistrationValidation;
 import tests.BaseTest;
 import utils.ConfigurationReader;
