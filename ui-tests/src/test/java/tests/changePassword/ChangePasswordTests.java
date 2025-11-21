@@ -1,5 +1,7 @@
 package tests.changePassword;
 
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Owner;
@@ -15,6 +17,7 @@ import utils.ConfigurationReader;
 
 @Epic("UI Tests")
 @Feature("User Registration")
+@DisplayName("Check change password functionality")
 public class ChangePasswordTests extends BaseTest {
 
     @BeforeEach
@@ -24,7 +27,10 @@ public class ChangePasswordTests extends BaseTest {
         Header header = new Header(context);
         header.open();
         header.clickAccountButton();
+
         LoginModal loginModal = new LoginModal(context);
+        loginModal.emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+
         loginModal.login(email, password);
         loginModal.open("mein-konto/edit-account");
     }
