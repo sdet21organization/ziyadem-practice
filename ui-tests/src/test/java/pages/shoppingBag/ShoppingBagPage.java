@@ -4,6 +4,7 @@ import com.microsoft.playwright.options.LoadState;
 import context.TestContext;
 import io.qameta.allure.Step;
 import pages.BasePage;
+import pages.purchaseFunction.CheckoutPage;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -11,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static pages.shoppingBag.ShoppingBagElements.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static pages.purchaseFunction.CheckoutPageElements.CHECKOUT_PAGE_TITLE;
+import static pages.shoppingBag.ShoppingBagPageElements.*;
 import static pages.startPageHeader.StartPageHeaderElements.PRODUCT_QUANTITY_IN_SHOPPING_BAG_ICON;
 
 public class ShoppingBagPage extends BasePage {
@@ -21,6 +22,7 @@ public class ShoppingBagPage extends BasePage {
     private final List<String> productNameList;
     private final List<String> productPriceList;
     private List<String> expectedProductNameList = new ArrayList<>();
+    private List<String> shoppingBagPriceList = new ArrayList<>();
 
     public ShoppingBagPage(TestContext context) {
         this(context, null, null);
@@ -232,6 +234,32 @@ public class ShoppingBagPage extends BasePage {
         click(COUNTER_MINUS_BUTTON);
         click(SHOPPING_BAG_UPDATE_BUTTON);
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        return this;
+    }
+
+    @Step("Proceed to checkout from shopping bag page")
+    public CheckoutPage proceedToCheckout() {
+        click(PROCEED_TO_CHECKOUT_BUTTON);
+        waitForVisibility(CHECKOUT_PAGE_TITLE);
+        return new CheckoutPage(context, shoppingBagPriceList);
+    }
+
+    @Step("Verify checkout button does not exist with empty cart")
+    public void verifyCannotProceedToCheckoutWithEmptyCart() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        assertFalse(getLocator(PROCEED_TO_CHECKOUT_BUTTON).isVisible(),
+                "Checkout button is visible with empty shopping cart");
+    }
+
+    @Step("Get product amount price in shopping bag")
+    public ShoppingBagPage getProductAmountPriceInShoppingBag() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        context.page.waitForTimeout(2000);
+        int productRowCount = getLocator(ROW_IN_SHOPPING_BAG_TABLE).count() - 1;
+        for (int i = 0; i < productRowCount; i++) {
+            String priceText = getText(ITEM_PRICE_IN_SHOPPING_BAG_TABLE, i).replaceAll("[^0-9.]", "").trim();
+            shoppingBagPriceList.add(priceText);
+        }
         return this;
     }
 }

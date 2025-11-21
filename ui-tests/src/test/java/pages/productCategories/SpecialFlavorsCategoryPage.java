@@ -3,6 +3,7 @@ package pages.productCategories;
 import com.microsoft.playwright.options.LoadState;
 import io.qameta.allure.Step;
 import pages.BasePage;
+import pages.purchaseFunction.CheckoutPage;
 import pages.shoppingBag.ShoppingBagPage;
 import utils.ConfigurationReader;
 
@@ -12,7 +13,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static pages.productCategories.SpecialFlavorsCategoryElements.*;
-import static pages.shoppingBag.ShoppingBagElements.SHOPPING_BAG_TABLE;
+import static pages.purchaseFunction.CheckoutPageElements.CHECKOUT_PAGE_TITLE;
+import static pages.shoppingBag.ShoppingBagPageElements.SHOPPING_BAG_TABLE;
 import static pages.startPageHeader.StartPageHeaderElements.*;
 
 public class SpecialFlavorsCategoryPage extends BasePage {
@@ -144,11 +146,20 @@ public class SpecialFlavorsCategoryPage extends BasePage {
     }
 
     @Step("Hover to shopping bag and verify mini cart popup")
-    public void hoverToShoppingBagAndVerifyMiniCartPopup(){
+    public SpecialFlavorsCategoryPage hoverToShoppingBagAndVerifyMiniCartPopup() {
         context.page.goBack();
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
         context.page.hover(SHOPPING_BAG_ICON);
         waitForVisibility(MINI_CART_POPUP_HOVER);
         waitForVisibility(PRODUCT_NAME_IN_MINI_CART_POPUP);
+        waitForVisibility(KASSE_BUTTON_IN_MINI_CART_POPUP);
+        return this;
+    }
+
+    @Step("Proceed to checkout from mini cart popup")
+    public CheckoutPage proceedToCheckoutFromMiniCartPopup() {
+        click(KASSE_BUTTON_IN_MINI_CART_POPUP);
+        waitForVisibility(CHECKOUT_PAGE_TITLE);
+        return new CheckoutPage(context);
     }
 }

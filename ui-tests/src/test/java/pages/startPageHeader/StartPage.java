@@ -5,7 +5,7 @@ import pages.BasePage;
 import pages.shoppingBag.ShoppingBagPage;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static pages.shoppingBag.ShoppingBagElements.SHOPPING_BAG_IS_EMPTY_MESSAGE;
+import static pages.shoppingBag.ShoppingBagPageElements.SHOPPING_BAG_IS_EMPTY_MESSAGE;
 import static pages.startPageHeader.StartPageHeaderElements.SHOPPING_BAG_ICON;
 
 public class StartPage extends BasePage {
@@ -33,7 +33,8 @@ public class StartPage extends BasePage {
                 click(SHOPPING_BAG_ICON);
                 waitForVisibility(SHOPPING_BAG_IS_EMPTY_MESSAGE);
                 return;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         throw new AssertionError("Failed to click on the shopping bag icon after 3 attempts");
     }
