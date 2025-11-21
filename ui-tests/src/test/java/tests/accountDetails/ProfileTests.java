@@ -173,7 +173,7 @@ public class ProfileTests extends BaseTest {
     @Disabled("Known bug ZIYAD-61: First Name accepts only special characters and saves successfully")
     @DisplayName("Special characters in First Name")
     void charsInFirstName() {
-        String invalid = "@#$%^&*";
+        String invalid = TestData.SPECIAL_CHARS;
         profilePage.setFirstName(invalid);
         String error = profilePage.getErrorMessage();
 
@@ -185,7 +185,7 @@ public class ProfileTests extends BaseTest {
     @Disabled("Known bug ZIYAD-62: Last Name accepts only special characters and saves successfully")
     @DisplayName("Special characters in Last Name")
     void charsInLastName() {
-        String invalid = "@#$%^&*";
+        String invalid = TestData.SPECIAL_CHARS;
         profilePage.setLastName(invalid);
         String error = profilePage.getErrorMessage();
 
@@ -196,7 +196,7 @@ public class ProfileTests extends BaseTest {
     @Test
     @DisplayName("Special characters in Display Name")
     void charsInDisplayName() {
-        String invalid = "@#$%^&*";
+        String invalid = TestData.SPECIAL_CHARS;
         profilePage.setDisplayName(invalid);
         String actual = profilePage.getDisplayName();
         String success = profilePage.getSuccessMessage();
@@ -207,9 +207,100 @@ public class ProfileTests extends BaseTest {
     @Test
     @DisplayName("Special characters in Email")
     void specialCharsInEmail() {
-        String invalid = "@#$%^&*";
+        String invalid = TestData.SPECIAL_CHARS;
         profilePage.setEmail(invalid);
         String msg = profilePage.getEmailValidationMessage();
         assertFalse(msg.isEmpty(), "Expected browser validation message but got empty string");
     }
+
+    @Test
+    @Disabled("Known bug ZIYAD-63: First Name accepts digits and saves successfully")
+    @DisplayName("Digits in First Name")
+    void digitsInFirstName() {
+        String invalid = TestData.DIGITS;
+        profilePage.setFirstName(invalid);
+        String error = profilePage.getErrorMessage();
+
+        // TODO: Update expected message when bug is fixed
+        assertTrue(error.contains("Ungültiger Vorname."), "Actual text: " + error);
+    }
+
+    @Test
+    @Disabled("Known bug ZIYAD-64: Last Name accepts digits and saves successfully")
+    @DisplayName("Digits in Last Name")
+    void digitsInLastName() {
+        String invalid = TestData.DIGITS;
+        profilePage.setLastName(invalid);
+        String error = profilePage.getErrorMessage();
+
+        // TODO: Update expected message after bug fix
+        assertTrue(error.contains("Ungültiger Nachname."), "Actual text: " + error);
+    }
+
+    @Test
+    @DisplayName("Invalid email format")
+    void invalidEmailFormat() {
+        String invalid = TestData.INVALID_EMAIL;
+        profilePage.setEmail(invalid);
+        String msg = profilePage.getEmailValidationMessage();
+        assertFalse(msg.isEmpty(), "Expected browser validation message but got empty string");
+    }
+
+    @Test
+    @DisplayName("Valid First Name")
+    void validFirstName() {
+        String firstName = TestData.randomFirstName();
+        profilePage.setFirstName(firstName);
+        String value = profilePage.getFirstName();
+        String success = profilePage.getSuccessMessage();
+        assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual: " + success);
+        assertEquals(firstName, value, "First Name not saved");
+    }
+
+    @Test
+    @DisplayName("Valid Last Name")
+    void validLastName() {
+        String lastName = TestData.randomLastName();
+        profilePage.setLastName(lastName);
+        String value = profilePage.getLastName();
+        String success = profilePage.getSuccessMessage();
+        assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual: " + success);
+        assertEquals(lastName, value, "Last Name not saved");
+    }
+
+    @Test
+    @DisplayName("Valid Display Name")
+    void validDisplayName() {
+        String first = TestData.randomFirstName();
+        String last = TestData.randomLastName();
+        String display = TestData.randomDisplayName(first, last);
+
+        profilePage.setDisplayName(display);
+        String value = profilePage.getDisplayName();
+        String success = profilePage.getSuccessMessage();
+
+        assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual: " + success);
+        assertEquals(display, value, "Display Name not saved");
+    }
+
+    @Test
+    @DisplayName("Valid Email")
+    void validEmail() {
+        String original = ConfigurationReader.get("email"); // ← правильный email
+        String newEmail = "new_" + original; // пример нового валидного email
+
+        try {
+            profilePage.setEmail(newEmail);
+            String value = profilePage.getEmail();
+            String success = profilePage.getSuccessMessage();
+
+            assertTrue(success.contains("Kontodetails erfolgreich geändert."), "Actual: " + success);
+            assertEquals(newEmail, value, "Email not saved");
+        } finally {
+            // ВАЖНО: возвращаем Email обратно
+            profilePage.setEmail(original);
+        }
+    }
+
+
 }

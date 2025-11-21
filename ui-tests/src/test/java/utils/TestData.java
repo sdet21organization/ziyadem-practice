@@ -4,6 +4,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class TestData {
 
+    public static final String SPECIAL_CHARS = "@#$%^&*";
+    public static final String DIGITS = "123456";
+    public static final String INVALID_EMAIL = "email@.com";
+
     private static final String[] FIRST_NAMES = {
             "Leonard", "Martin", "Oliver", "Daniel", "Samuel",
             "James", "Henry", "Lucas", "Mason", "Ethan",
