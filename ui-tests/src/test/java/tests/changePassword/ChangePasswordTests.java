@@ -29,7 +29,6 @@ public class ChangePasswordTests extends BaseTest {
         header.clickAccountButton();
 
         LoginModal loginModal = new LoginModal(context);
-        loginModal.loginButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
 
         loginModal.login(email, password);
         loginModal.open("mein-konto/edit-account");
