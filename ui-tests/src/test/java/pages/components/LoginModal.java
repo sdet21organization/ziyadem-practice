@@ -10,7 +10,10 @@ public class LoginModal extends BasePage {
     public final Locator loginFormPopup;
     private final Locator usernameInput;
     private final Locator passwordInput;
-    private final Locator loginButton;
+    public final Locator loginButton;
+    public final Locator emailInput;
+    private final Locator registrationButton;
+    public final Locator errorMessage;
 
     public LoginModal(TestContext context) {
         super(context);
@@ -18,11 +21,15 @@ public class LoginModal extends BasePage {
         this.usernameInput = context.page.locator("input[name='username'], #username");
         this.passwordInput = context.page.locator("input[name='password'], #password");
         this.loginButton = context.page.locator("button[name='login'], .woocommerce-form-login__submit, button[type='submit']");
+        this.emailInput =context.page.locator("input[name='email']");
+        this.registrationButton =context.page.locator("button[name='register']");
+        this.errorMessage =context.page.locator(".woocommerce-error");
     }
 
-    @Step("Check if Login modal is opened")
-    public boolean LoginModalIsOpened() {
-        return loginFormPopup.isVisible();
+    @Step("Register new user with following email: {}")
+    public void newUserRegistration(String email) {
+        emailInput.fill(email);
+        registrationButton.click();
     }
 
     @Step("Wait until Login modal is visible")

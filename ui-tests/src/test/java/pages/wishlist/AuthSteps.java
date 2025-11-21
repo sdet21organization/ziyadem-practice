@@ -2,7 +2,7 @@ package pages.wishlist;
 
 import context.TestContext;
 import io.qameta.allure.Step;
-import pages.LoginPage;
+import pages.login.LoginPage;
 import utils.ConfigurationReader;
 
 public class AuthSteps {
