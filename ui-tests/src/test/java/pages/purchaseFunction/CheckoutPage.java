@@ -141,6 +141,7 @@ public class CheckoutPage extends BasePage {
     @Step("Verify final total amount on checkout page")
     public void verifyFinalTotalAmountOnCheckoutPage() {
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        context.page.waitForTimeout(2000);
         String expectedTotalAmount = shoppingBagPriceList.stream()
                 .map(price -> price.replace(",", "."))
                 .mapToDouble(Double::parseDouble)
@@ -206,7 +207,6 @@ public class CheckoutPage extends BasePage {
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
         waitForVisibility(REQUIRED_FIELDS_ERROR_ALERT_CONTAINER);
         String actualAlertText = getText(REQUIRED_CHECKBOX_LEGAL_ALERT);
-        System.out.println("actualAlertText = " + actualAlertText);
         assertEquals("Bitte akzeptiere unsere Allgemeinen Geschäftsbedingungen und Widerrufsbestimmungen.", actualAlertText,
                 "Actual alert text: '" + actualAlertText + "', does not match expected alert text for missing legal checkbox confirmation");
     }
