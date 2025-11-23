@@ -38,8 +38,10 @@ public class FooterTests extends BaseTest {
 
         Browser currentBrowser = context.browserContext.browser();
 
-        context.browserContext.tracing().stop();
-        context.browserContext.close();
+        if (context.browserContext != null) {
+            context.browserContext.tracing().stop();
+            context.browserContext.close();
+        }
 
         context.browserContext = currentBrowser.newContext(
                 new Browser.NewContextOptions()
