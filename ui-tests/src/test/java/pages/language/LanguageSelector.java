@@ -100,12 +100,8 @@ public class LanguageSelector extends BasePage {
     public double getScrollTop() {
         Locator container = context.page.locator(OPTIONS_CONTAINER).first();
         Object value = container.evaluate("el => el.scrollTop");
-        if (value instanceof Double) {
-            return (Double) value;
-        }
-        if (value instanceof Integer) {
-            return ((Integer) value).doubleValue();
-        }
+        if (value instanceof Double) return (Double) value;
+        if (value instanceof Integer) return ((Integer) value).doubleValue();
         return 0.0;
     }
 
@@ -123,10 +119,22 @@ public class LanguageSelector extends BasePage {
 
     @Step("Switch language to English")
     public void switchToEnglish() {
+        if (isEnglishUi()) {
+            return;
+        }
+
         openDropdown();
+
         String englishSelector =
                 "div.gt_option a[data-gt-lang='en'], div.gt_option a[title='English']";
+
         Locator english = context.page.locator(englishSelector).first();
+
+        if (!english.isVisible()) {
+            reopen();
+            english = context.page.locator(englishSelector).first();
+        }
+
         english.click(new Locator.ClickOptions().setTimeout(10000));
         context.page.waitForTimeout(1500);
     }
@@ -136,12 +144,8 @@ public class LanguageSelector extends BasePage {
         Locator selected = context.page.locator("div.gt_selected a").first();
         if (selected.count() > 0) {
             String selectedText = selected.innerText().toLowerCase().trim();
-            if (selectedText.contains("english")) {
-                return true;
-            }
-            if (selected.locator("img[alt='en']").count() > 0) {
-                return true;
-            }
+            if (selectedText.contains("english")) return true;
+            if (selected.locator("img[alt='en']").count() > 0) return true;
         }
 
         String[] samples = new String[]{
