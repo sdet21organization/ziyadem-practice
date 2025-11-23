@@ -1,11 +1,13 @@
 package pages.purchaseFunction;
 
 public class OrderConfirmationPageElements {
-    public static final String ORDER_CONFIRMATION_PAGE_TITLE = "//font[contains(text(), 'Bestellung abgeschlossen ')]";
-    public static final String SUCCESSFUL_ORDER_CREATION_MESSAGE = "//font[contains(text(), 'Vielen Dank. Deine Bestellung ist eingegangen.')]";
+    public static final String ORDER_CONFIRMATION_PAGE_TITLE = "//a[contains(., 'Bestellung abgeschlossen ')]";
+    public static final String SUCCESSFUL_ORDER_CREATION_MESSAGE = "//p[contains(., 'Vielen Dank. Deine Bestellung ist eingegangen.')]";
+    public static final String USER_ACCOUNT_MENU = "//a[@title='Mein Konto']";
+    public static final String USERS_ORDERS = "//a[contains(., 'Bestellungen')]";
 
     // Bank Details Section
-    public static final String BANK_DETAILS_SECTION = "//font[text()='Unsere Bankverbindung']";
+    public static final String BANK_DETAILS_SECTION = "//h2[contains(., 'Unsere Bankverbindung')]";
     public static final String BANK_NAME_DETAILS = "//li[@class='bank_name']";
     public static final String ACCOUNT_NUMBER_DETAILS = "//li[@class='account_number']";
     public static final String SORT_CODE_DETAILS = "//li[@class='sort_code']";
@@ -21,7 +23,7 @@ public class OrderConfirmationPageElements {
     public static final String PAYMENT_METHOD = "li.woocommerce-order-overview__payment-method strong";
 
     //Order Details
-    public static final String ORDER_DETAILS_SECTION = "//h2//font[contains(text(), 'Bestelldetails')]";
+    public static final String ORDER_DETAILS_SECTION = "//h2[contains(., 'Bestelldetails')]";
     public static final String PRODUCT_NAME_IN_ORDER_DETAILS = "tr.woocommerce-table__line-item .product-name a";
     public static final String TOTAL_AMOUNT_IN_ORDER_DETAILS = "//tr[th[contains(., 'Gesamt')]]/td//span[contains(@class, 'amount')]";
 }

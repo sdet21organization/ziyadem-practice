@@ -7,7 +7,4 @@ public class StartPageHeaderElements {
     public static final String MINI_CART_POPUP = "//li[@class='cart-item has-icon has-dropdown current-dropdown cart-active']// ul[@class='nav-dropdown nav-dropdown-default']";
     public static final String PRODUCT_NAME_IN_MINI_CART_POPUP = "//ul[@class='nav-dropdown nav-dropdown-default']//a[contains(@href, '/produkt/')]/font[last()]";
     public static final String KASSE_BUTTON_IN_MINI_CART_POPUP = "//ul[@class='nav-dropdown nav-dropdown-default']//a[contains(@href, '/checkout')]";
-
-    public static final String SHOPPING_CART_WINDOW_TITLE = "//div[@class='cart-popup-title text-center']//font[text()='Warenkorb']";
-    public static final String SHOPPING_CART_WINDOW_PRODUCT_NAME = "//div[@id='cart-popup']//ul[contains(@class, 'cart_list')]//a[contains(@href, '/produkt/')]/font[last()]";
 }

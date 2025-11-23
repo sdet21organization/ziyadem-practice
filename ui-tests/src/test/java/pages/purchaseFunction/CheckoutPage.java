@@ -47,9 +47,9 @@ public class CheckoutPage extends BasePage {
         assertTrue(getLocator(PLACE_ORDER_BUTTON).isVisible(), "Place order button is not visible on checkout page");
     }
 
-    @Step("Confirm order with all empty fields and validate required field alerts")
+    @Step("Validate required field error alerts")
     public void validateAllEmptyFields() {
-        waitForVisibility(REQUIRED_FIELDS_ERROR_ALERT);
+        waitForVisibility(REQUIRED_FIELDS_ERROR_ALERT_CONTAINER);
         assertTrue(getLocator(REQUIRED_FIELD_EMAIL_ALERT).isVisible(), "Required field 'E-Mail address' alert is not visible");
         assertTrue(getLocator(REQUIRED_FIELD_FIRST_NAME_ALERT).isVisible(), "Required field 'First name' alert is not visible");
         assertTrue(getLocator(REQUIRED_FIELD_LAST_NAME_ALERT).isVisible(), "Required field 'Last name' alert is not visible");
@@ -199,6 +199,16 @@ public class CheckoutPage extends BasePage {
         assertTrue(getLocator(SUCCESSFUL_ORDER_CREATION_MESSAGE).isVisible() && getLocator(ORDER_CONFIRMATION_PAGE_TITLE).isVisible(),
                 "Order confirmation page is not opened or success message is not visible");
         return new StartPage(context);
+    }
+
+    @Step("Verify error message without legal checkbox checked")
+    public void verifyErrorMessageWithoutLegalCheckboxChecked() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        waitForVisibility(REQUIRED_FIELDS_ERROR_ALERT_CONTAINER);
+        String actualAlertText = getText(REQUIRED_CHECKBOX_LEGAL_ALERT);
+        System.out.println("actualAlertText = " + actualAlertText);
+        assertEquals("Bitte akzeptiere unsere Allgemeinen Geschäftsbedingungen und Widerrufsbestimmungen.", actualAlertText,
+                "Actual alert text: '" + actualAlertText + "', does not match expected alert text for missing legal checkbox confirmation");
     }
 
     @Step("Verify error message for incorrect Postcode")

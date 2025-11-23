@@ -1,8 +1,10 @@
 package pages.purchaseFunction;
 
+import com.microsoft.playwright.options.LoadState;
 import context.TestContext;
 import io.qameta.allure.Step;
 import pages.BasePage;
+import pages.accountDetails.OrdersPage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +16,8 @@ import static pages.purchaseFunction.OrderConfirmationPageElements.*;
 public class OrderConfirmationPage extends BasePage {
 
     private final String expectedOrderAmount;
+    private String orderNumber;
+    private String orderAmount;
 
     public OrderConfirmationPage(TestContext context, String expectedOrderAmount) {
         super(context);
@@ -32,6 +36,7 @@ public class OrderConfirmationPage extends BasePage {
 
     @Step("Verify order information is correct on Order Confirmation Page")
     public void verifyOrderInformationIsCorrect() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
         LocalDate currentDate = LocalDate.now();
         String expectedOrderDate = currentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
@@ -45,11 +50,28 @@ public class OrderConfirmationPage extends BasePage {
                 "Payment Method is incorrect on Order Confirmation Page");
     }
 
-    @Step("Verify order information is correct on Order Confirmation Page")
-    public void verifyOrderDetailsOnCofirmationPage() {
+    @Step("Verify order details are correct on Order Confirmation Page")
+    public void verifyOrderDetailsOnConfirmationPage() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
         waitForVisibility(ORDER_DETAILS_SECTION);
         assertEquals(expectedOrderAmount.replace(",", "."),
                 getLocator(TOTAL_AMOUNT_IN_ORDER_DETAILS).textContent().replaceAll("[^0-9.]", "").trim(),
                 "Total Amount in order details is incorrect on Order Confirmation Page");
+    }
+
+    @Step("Get order number and order amount from Order Confirmation Page")
+    public OrderConfirmationPage getOrderNumberAndOrderAmount() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        orderNumber = getLocator(ORDER_NUMBER).textContent().trim();
+        orderAmount = getLocator(TOTAL).textContent().replaceAll("[^0-9.]", "").trim();
+        return this;
+    }
+
+    @Step("Open users orders page")
+    public OrdersPage openOrdersPage() {
+        context.page.waitForLoadState(LoadState.NETWORKIDLE);
+        context.page.locator(USER_ACCOUNT_MENU).nth(1).hover();
+        click(USERS_ORDERS);
+        return new OrdersPage(context, orderNumber, orderAmount);
     }
 }

@@ -96,7 +96,7 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
     }
 
     @Test
-    @DisplayName("User can complete the purchase even he/she doesn't login")
+    @DisplayName("User can complete the purchase even if he/she doesn't login")
     public void createOrderWithValidData() {
         new SpecialFlavorsCategoryPage(context)
                 .openSpecialFlavorsCategoryPage()
@@ -155,6 +155,6 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
                 .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
                 .getTotalAmountFromCheckoutPage()
                 .confirmOrderAndGoToOrderConfirmationPage()
-                .verifyOrderDetailsOnCofirmationPage();
+                .verifyOrderDetailsOnConfirmationPage();
     }
 }

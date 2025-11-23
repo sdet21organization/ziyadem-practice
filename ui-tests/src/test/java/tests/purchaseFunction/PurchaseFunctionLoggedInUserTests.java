@@ -79,6 +79,20 @@ public class PurchaseFunctionLoggedInUserTests extends BaseTest {
     }
 
     @Test
+    @DisplayName("User cannot complete the purchase when legal checkbox is unchecked")
+    public void createOrderWithoutLegalCheckbox() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .confirmOrder()
+                .verifyErrorMessageWithoutLegalCheckboxChecked();
+    }
+
+    @Test
     @DisplayName("Unsuccessful order creation with incorrect Postcode")
     public void createOrderWithIncorrectPostcode() {
         new SpecialFlavorsCategoryPage(context)
@@ -145,7 +159,7 @@ public class PurchaseFunctionLoggedInUserTests extends BaseTest {
     }
 
     @Test
-    @DisplayName("Successful order creation with PayPal payment method")
+    @DisplayName("Verify user can create order with PayPal payment method")
     public void createOrderWithPayPalPaymentMethod() {
         new SpecialFlavorsCategoryPage(context)
                 .openSpecialFlavorsCategoryPage()
@@ -174,5 +188,22 @@ public class PurchaseFunctionLoggedInUserTests extends BaseTest {
                 .verifyOrderReceivedPageIsOpened()
                 .openShoppingBagPage()
                 .verifyShoppingBagIsEmpty();
+    }
+
+    @Test
+    @DisplayName("Verify order exists in user account after successful order placement")
+    public void verifyOrderExistsInPersonalAccount() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .chooseDirectBankTransferMethodAndCheckLegalCheckbox()
+                .confirmOrderAndGoToOrderConfirmationPage()
+                .getOrderNumberAndOrderAmount()
+                .openOrdersPage()
+                .verifyOrderExistsInUserAccount();
     }
 }
