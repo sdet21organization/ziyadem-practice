@@ -127,4 +127,11 @@ public class Header extends BasePage {
         context.page.navigate(base);
         acceptCookiesIfPresent();
     }
+    @Step("Open top-menu category: {name}")
+    public void openTopMenuCategory(String name) {
+        String selector = "header a:has-text(\"" + name + "\")";
+        Locator link = context.page.locator(selector).first();
+        link.waitFor(new Locator.WaitForOptions().setTimeout(5000));
+        link.click();
+    }
 }

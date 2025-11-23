@@ -1,7 +1,7 @@
 package pages.productCategories;
 
 public class SpecialFlavorsCategoryElements {
-    public static final String SPECIAL_FLAVORS_CATEGORY_TITLE = "//nav[@class='woocommerce-breadcrumb breadcrumbs uppercase']//font[@dir='auto']//font[normalize-space(.)='Special Flavors']";
+    public static final String SPECIAL_FLAVORS_CATEGORY_TITLE = "//nav[contains(@class,'woocommerce-breadcrumb')]";
     public static final String PRODUCT_ITEM_BY_NAME = "//div[@class='col-inner']//font[@dir='auto']//font[normalize-space(.)='%s']";
     public static final String AVAILABLE_ITEM = "//div[contains(@class, 'product-small col') and not(.//*[contains(text(), 'Nicht vorrätig')])]";
     public static final String PRODUCT_TITLE = "//h1[@class='product-title product_title entry-title']";
