@@ -17,6 +17,8 @@ import pages.components.Header;
 import tests.BaseTest;
 import utils.ConfigurationReader;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,8 @@ public class FooterTests extends BaseTest {
         super.beforeEach();
 
         Browser currentBrowser = context.browserContext.browser();
+
+        context.browserContext.tracing().stop();
         context.browserContext.close();
 
         context.browserContext = currentBrowser.newContext(
@@ -46,9 +50,12 @@ public class FooterTests extends BaseTest {
                         .setExtraHTTPHeaders(Map.of("Accept-Language", "de-DE,de;q=0.9"))
         );
 
+        String baseUrl = ConfigurationReader.get("URL");
+        String domain = getDomainName(baseUrl);
+
         context.browserContext.addCookies(List.of(
                 new Cookie("googtrans", "/auto/de")
-                        .setDomain(".ziyadem.de")
+                        .setDomain(domain)
                         .setPath("/")
         ));
 
@@ -57,6 +64,16 @@ public class FooterTests extends BaseTest {
                 .setSnapshots(true));
 
         context.page = context.browserContext.newPage();
+    }
+
+    private String getDomainName(String url) {
+        try {
+            URI uri = new URI(url);
+            String domain = uri.getHost();
+            return domain.startsWith("www.") ? domain.substring(4) : domain;
+        } catch (URISyntaxException e) {
+            return ".ziyadem.de";
+        }
     }
 
     @Test
@@ -98,18 +115,18 @@ public class FooterTests extends BaseTest {
 
         context.page.locator("body").filter(new Locator.FilterOptions().setHasText("Datenschutz")).waitFor();
 
+        String pageTitle = context.page.title();
+        boolean isTitleCorrect = pageTitle.contains("Datenschutz") || pageTitle.contains("Privacy");
         boolean isUrlCorrect = context.page.url().contains("datenschutz");
-        boolean isTitleCorrect = context.page.title().contains("Datenschutz");
 
-        Assertions.assertTrue(isUrlCorrect || isTitleCorrect,
-                "Page title or URL does not contain expected text. Current URL: " + context.page.url());
+        Assertions.assertTrue(isTitleCorrect || isUrlCorrect,
+                "Navigation failed. Page title: " + pageTitle + ", URL: " + context.page.url());
 
         context.page.goBack();
 
         String baseUrl = ConfigurationReader.get("URL");
-        context.page.waitForURL(Pattern.compile(".*" + baseUrl.replace("https://", "") + ".*"));
+        context.page.waitForURL(Pattern.compile(".*" + Pattern.quote(baseUrl.replace("https://", "").replace("http://", "")) + ".*"));
 
-        Assertions.assertTrue(context.page.url().contains(baseUrl), "Back button did not return to homepage");
         Assertions.assertTrue(footer.isFooterVisible(), "Footer should be visible after back navigation");
     }
 

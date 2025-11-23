@@ -22,7 +22,7 @@ public class Footer extends BasePage {
 
     @Step("Wait for footer links to load")
     public void waitForFooterLinksToLoad() {
-        footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
+        footerLinks.filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).first().waitFor();
     }
 
     @Step("Get all footer link texts")
