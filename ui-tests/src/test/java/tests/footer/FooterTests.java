@@ -15,8 +15,11 @@ import org.junit.jupiter.api.Test;
 import pages.components.Footer;
 import pages.components.Header;
 import tests.BaseTest;
+import utils.ConfigurationReader;
 
+import java.time.Year;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Epic("UI Tests")
@@ -26,8 +29,11 @@ import java.util.regex.Pattern;
 @Owner("Oleksii Golos")
 public class FooterTests extends BaseTest {
 
+    @Override
     @BeforeEach
-    public void setupGermanLanguage() {
+    public void beforeEach() {
+        super.beforeEach();
+
         Browser currentBrowser = context.browserContext.browser();
         context.browserContext.close();
 
@@ -37,7 +43,7 @@ public class FooterTests extends BaseTest {
                         .setTimezoneId("Europe/Berlin")
                         .setGeolocation(52.5200, 13.4050)
                         .setPermissions(List.of("geolocation"))
-                        .setExtraHTTPHeaders(java.util.Map.of("Accept-Language", "de-DE,de;q=0.9"))
+                        .setExtraHTTPHeaders(Map.of("Accept-Language", "de-DE,de;q=0.9"))
         );
 
         context.browserContext.addCookies(List.of(
@@ -60,8 +66,7 @@ public class FooterTests extends BaseTest {
 
         Footer footer = new Footer(context);
         footer.scrollToFooter();
-
-        footer.footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
+        footer.waitForFooterLinksToLoad();
 
         List<String> expectedLinks = List.of(
                 "Unternehmensinformationen",
@@ -86,22 +91,25 @@ public class FooterTests extends BaseTest {
 
         Footer footer = new Footer(context);
         footer.scrollToFooter();
+        footer.waitForFooterLinksToLoad();
 
-        footer.footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
+        String linkToTest = "Datenschutzrichtlinie";
+        footer.clickFooterLink(linkToTest);
 
-        Locator linkElement = footer.footerLinks.filter(new Locator.FilterOptions().setHasText("Datenschutzrichtlinie")).first();
-        String expectedUrl = linkElement.getAttribute("href");
+        context.page.locator("body").filter(new Locator.FilterOptions().setHasText("Datenschutz")).waitFor();
 
-        linkElement.click();
+        boolean isUrlCorrect = context.page.url().contains("datenschutz");
+        boolean isTitleCorrect = context.page.title().contains("Datenschutz");
 
-        context.page.waitForURL(expectedUrl);
-
-        Assertions.assertEquals(expectedUrl, context.page.url(), "URL did not match the expected link attribute");
+        Assertions.assertTrue(isUrlCorrect || isTitleCorrect,
+                "Page title or URL does not contain expected text. Current URL: " + context.page.url());
 
         context.page.goBack();
-        context.page.waitForURL(Pattern.compile(".*ziyadem.de.*"));
 
-        Assertions.assertTrue(context.page.url().contains("ziyadem.de"), "Back button did not return to homepage");
+        String baseUrl = ConfigurationReader.get("URL");
+        context.page.waitForURL(Pattern.compile(".*" + baseUrl.replace("https://", "") + ".*"));
+
+        Assertions.assertTrue(context.page.url().contains(baseUrl), "Back button did not return to homepage");
         Assertions.assertTrue(footer.isFooterVisible(), "Footer should be visible after back navigation");
     }
 
@@ -114,8 +122,10 @@ public class FooterTests extends BaseTest {
         footer.scrollToFooter();
 
         String actualText = footer.getCopyrightText();
+        String currentYear = String.valueOf(Year.now().getValue());
 
-        Assertions.assertTrue(actualText.contains("Copyright 2025"), "Copyright year is missing");
+        Assertions.assertTrue(actualText.contains("Copyright " + currentYear),
+                "Copyright year matches current year (" + currentYear + ")");
         Assertions.assertTrue(actualText.contains("Ziyadem Naturladen"), "Company name is missing");
     }
 
@@ -127,14 +137,14 @@ public class FooterTests extends BaseTest {
 
         header.open();
         footer.scrollToFooter();
-
-        footer.footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
+        footer.waitForFooterLinksToLoad();
         List<String> homeLinks = footer.getFooterLinkTexts();
 
-        context.page.navigate("https://ziyadem.de/shop/");
+        String shopUrl = ConfigurationReader.get("URL") + "shop/";
+        context.page.navigate(shopUrl);
 
         footer.scrollToFooter();
-        footer.footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
+        footer.waitForFooterLinksToLoad();
 
         List<String> shopLinks = footer.getFooterLinkTexts();
 

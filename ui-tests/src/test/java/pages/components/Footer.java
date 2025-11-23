@@ -15,17 +15,18 @@ public class Footer extends BasePage {
 
     public Footer(TestContext context) {
         super(context);
-        // Основной контейнер футера
         this.footerContainer = context.page.locator("#footer");
-        // Ссылки меню
         this.footerLinks = context.page.locator(".menu-rechtliches-container li a");
-        // Текст копирайта
         this.copyrightText = context.page.locator(".copyright-footer");
+    }
+
+    @Step("Wait for footer links to load")
+    public void waitForFooterLinksToLoad() {
+        footerLinks.first().filter(new Locator.FilterOptions().setHasText("Unternehmensinformationen")).waitFor();
     }
 
     @Step("Get all footer link texts")
     public List<String> getFooterLinkTexts() {
-        footerLinks.first().waitFor();
         return footerLinks.allInnerTexts();
     }
 
@@ -38,7 +39,8 @@ public class Footer extends BasePage {
     @Step("Get copyright text")
     public String getCopyrightText() {
         copyrightText.waitFor();
-        return copyrightText.textContent().trim();
+        String text = copyrightText.textContent();
+        return text != null ? text.trim() : "";
     }
 
     @Step("Scroll to footer")
