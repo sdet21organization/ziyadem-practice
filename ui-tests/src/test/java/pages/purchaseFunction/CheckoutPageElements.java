@@ -17,7 +17,7 @@ public class CheckoutPageElements {
     public static final String COMMENTS_TEXTAREA = "//textarea[@name='order_comments']";
     public static final String PLACE_ORDER_BUTTON = "//button[@id='place_order']";
     public static final String REQUIRED_FIELDS_ERROR_ALERT = "//div[contains(@class, 'message-container') and contains(., 'ist ein Pflichtfeld')]";
-    public static final String REQUIRED_FIELDS_ERROR_ALERT_CONTAINER = "//div[@class='woocommerce-NoticeGroup woocommerce-NoticeGroup-checkout']";
+    public static final String REQUIRED_FIELDS_ERROR_ALERT_CONTAINER = "div.woocommerce-NoticeGroup-checkout";
     public static final String REQUIRED_FIELD_EMAIL_ALERT = "//li[@data-id='billing_email']";
     public static final String REQUIRED_FIELD_FIRST_NAME_ALERT = "//li[@data-id='billing_first_name']";
     public static final String REQUIRED_FIELD_LAST_NAME_ALERT = "//li[@data-id='billing_last_name']";
