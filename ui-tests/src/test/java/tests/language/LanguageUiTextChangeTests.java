@@ -9,7 +9,7 @@ import pages.BasePage;
 import pages.components.Header;
 import pages.components.LoginModal;
 import pages.language.LanguageSelector;
-import pages.shoppingBag.ShoppingBagElements;
+import pages.shoppingBag.ShoppingBagPageElements;
 import pages.shoppingBag.ShoppingBagPage;
 import pages.startPageHeader.StartPage;
 import pages.wishlist.NutsPage;
@@ -61,7 +61,7 @@ public class LanguageUiTextChangeTests extends BaseTest {
                 .click();
 
         new ShoppingBagPage(context);
-        base.waitForVisibility(ShoppingBagElements.SHOPPING_BAG_TABLE);
+        base.waitForVisibility(ShoppingBagPageElements.SHOPPING_BAG_TABLE);
         assertTrue(waitForEnglish(selector));
 
         context.page
