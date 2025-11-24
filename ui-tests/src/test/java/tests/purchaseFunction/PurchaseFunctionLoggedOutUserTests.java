@@ -96,6 +96,19 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
     }
 
     @Test
+    @DisplayName("Delivery price changes with country changing")
+    public void verifyDeliveryPriceChanged() {
+        new SpecialFlavorsCategoryPage(context)
+                .openSpecialFlavorsCategoryPage()
+                .chooseProduct()
+                .addProductToShoppingBag()
+                .goToShoppingBagPage()
+                .proceedToCheckout()
+                .fillAllRequiredFields()
+                .changeCountryAndVerifyDeliveryPriceChange();
+    }
+
+    @Test
     @DisplayName("User can complete the purchase even if he/she doesn't login")
     public void createOrderWithValidData() {
         new SpecialFlavorsCategoryPage(context)
@@ -149,7 +162,6 @@ public class PurchaseFunctionLoggedOutUserTests extends BaseTest {
                 .chooseProduct()
                 .addProductToShoppingBag()
                 .goToShoppingBagPage()
-                .getItemsInShoppingBag()
                 .proceedToCheckout()
                 .fillAllRequiredFields()
                 .chooseDirectBankTransferMethodAndCheckLegalCheckbox()

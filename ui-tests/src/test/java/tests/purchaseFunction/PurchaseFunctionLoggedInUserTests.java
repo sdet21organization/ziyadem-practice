@@ -26,19 +26,6 @@ public class PurchaseFunctionLoggedInUserTests extends BaseTest {
     }
 
     @Test
-    @DisplayName("Delivery price changes with country changing")
-    public void verifyDeliveryPriceChanged() {
-        new SpecialFlavorsCategoryPage(context)
-                .openSpecialFlavorsCategoryPage()
-                .chooseProduct()
-                .addProductToShoppingBag()
-                .goToShoppingBagPage()
-                .proceedToCheckout()
-                .fillAllRequiredFields()
-                .changeCountryAndVerifyDeliveryPriceChange();
-    }
-
-    @Test
     @DisplayName("Payment method selection")
     public void verifyPaymentMethods() {
         new SpecialFlavorsCategoryPage(context)

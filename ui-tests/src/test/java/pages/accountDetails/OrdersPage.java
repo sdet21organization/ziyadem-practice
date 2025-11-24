@@ -12,6 +12,7 @@ import static pages.accountDetails.OrdersPageElements.*;
 public class OrdersPage extends BasePage {
     private final String expectedOrderNumber;
     private final String expectedOrderAmount;
+
     public OrdersPage(TestContext context, String expectedOrderNumber, String expectedOrderAmount) {
         super(context);
         this.expectedOrderNumber = expectedOrderNumber;
@@ -19,7 +20,7 @@ public class OrdersPage extends BasePage {
     }
 
     @Step("Verify that the order with number and amount is displayed in the Orders table")
-    public void verifyOrderExistsInUserAccount(){
+    public void verifyOrderExistsInUserAccount() {
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
         waitForVisibility(ORDERS_TABLE);
         assertTrue(getLocator(String.format(ORDER_NUMBER_IN_TABLE, expectedOrderNumber)).isVisible(),

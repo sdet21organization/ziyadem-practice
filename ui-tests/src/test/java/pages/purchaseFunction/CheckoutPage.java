@@ -142,22 +142,20 @@ public class CheckoutPage extends BasePage {
     public void verifyFinalTotalAmountOnCheckoutPage() {
         context.page.waitForLoadState(LoadState.NETWORKIDLE);
         context.page.waitForTimeout(2000);
-        String expectedTotalAmount = shoppingBagPriceList.stream()
+        double expectedTotalAmount = shoppingBagPriceList.stream()
                 .map(price -> price.replace(",", "."))
                 .mapToDouble(Double::parseDouble)
-                .sum() + "";
+                .sum();
         String actualShippingCost = getText(SHIPPING_COST_IN_CHECKOUT_PAGE)
                 .replaceAll("[^0-9,.]", "")
                 .replace(",", ".").trim();
-        expectedTotalAmount = new DecimalFormat("0.00").format(Double.parseDouble(expectedTotalAmount)
-                + Double.parseDouble(actualShippingCost));
-
+        expectedTotalAmount += Double.parseDouble(actualShippingCost);
+        String formattedExpectedTotalAmount = new DecimalFormat("0.00").format(expectedTotalAmount);
         String actualTotalAmount = getText(TOTAL_AMOUNT_ON_CHECKOUT_PAGE, 0)
                 .replaceAll("[^0-9,]", "")
                 .replace(",", ".").trim();
-
-        assertEquals(expectedTotalAmount, actualTotalAmount,
-                "Expected total amount: '" + expectedTotalAmount + "', but got: '" + actualTotalAmount + "'");
+        assertEquals(formattedExpectedTotalAmount, actualTotalAmount,
+                "Expected total amount: '" + formattedExpectedTotalAmount + "', but got: '" + actualTotalAmount + "'");
     }
 
     @Step("Choose Direct Bank Transfer method, check legal checkbox")
