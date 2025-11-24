@@ -9,5 +9,5 @@ public class SpecialFlavorsCategoryElements {
     public static final String PRODUCT_PRICE_DISCOUNTED = "div.product-info.summary.col-fit.col.entry-summary.product-summary.text-center.form-flat div.price-wrapper ins .woocommerce-Price-amount";
     public static final String QUANTITY_COUNTER_INPUT = "//input[@type='number']";
     public static final String ADD_TO_CART_BUTTON = "//button[@name='add-to-cart']";
-    public static final String SUCCESS_ADDITION_ALERT = "//font[contains(text(),'Warenkorb hinzugefügt')]";
+    public static final String SUCCESS_ADDITION_ALERT = "//div[@class='message-container container success-color medium-text-center']";
 }
