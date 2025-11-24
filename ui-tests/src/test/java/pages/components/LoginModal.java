@@ -20,7 +20,7 @@ public class LoginModal extends BasePage {
         this.loginFormPopup = context.page.locator("#login-form-popup, .mfp-content #login-form-popup");
         this.usernameInput = context.page.locator("input[name='username'], #username");
         this.passwordInput = context.page.locator("input[name='password'], #password");
-        this.loginButton = context.page.locator("button[name='login'], .woocommerce-form-login__submit, button[type='submit']");
+        this.loginButton = context.page.locator("button[name='login']");
         this.emailInput =context.page.locator("input[name='email']");
         this.registrationButton =context.page.locator("button[name='register']");
         this.errorMessage =context.page.locator(".woocommerce-error");
