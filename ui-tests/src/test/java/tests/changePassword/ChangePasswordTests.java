@@ -1,7 +1,5 @@
 package tests.changePassword;
 
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.WaitForSelectorState;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Owner;
@@ -10,28 +8,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.account.AccountDetailsPage;
-import pages.components.Header;
-import pages.components.LoginModal;
+import pages.login.LoginPage;
 import tests.BaseTest;
 import utils.ConfigurationReader;
 
 @Epic("UI Tests")
 @Feature("User Registration")
 @DisplayName("Check change password functionality")
+
 public class ChangePasswordTests extends BaseTest {
 
     @BeforeEach
     public void loginAsDefinedUser() {
         String email = ConfigurationReader.get("change-password-email");
         String password = ConfigurationReader.get("change-password-password");
-        Header header = new Header(context);
-        header.open();
-        header.clickAccountButton();
 
-        LoginModal loginModal = new LoginModal(context);
-
-        loginModal.login(email, password);
-        loginModal.open("mein-konto/edit-account");
+        LoginPage loginPage = new LoginPage(context);
+        loginPage.openLoginPage();
+        loginPage.enterUsername(email);
+        loginPage.enterPassword(password);
+        loginPage.submit();
+        loginPage.open("mein-konto/edit-account");
     }
 
     @Test
@@ -51,7 +48,7 @@ public class ChangePasswordTests extends BaseTest {
             String expectedMessage = "Kontodetails erfolgreich geändert.";
             String actualMessage = accountDetailsPage.messageContainer.first().textContent().trim();
 
-            Assertions.assertEquals(expectedMessage, actualMessage,"Unexpected message: " + actualMessage);
+            Assertions.assertEquals(expectedMessage, actualMessage, "Unexpected message: " + actualMessage);
         } finally {
             //return password to previous one
             if (passwordIsChanged) {
@@ -95,7 +92,7 @@ public class ChangePasswordTests extends BaseTest {
         String expectedMessage = "Die neuen Passwörter stimmen nicht überein.";
         String actualMessage = accountDetailsPage.messageContainer.first().textContent().trim();
 
-        Assertions.assertEquals(expectedMessage, actualMessage,"Unexpected error message: " + actualMessage);
+        Assertions.assertEquals(expectedMessage, actualMessage, "Unexpected error message: " + actualMessage);
     }
 
     @Test
