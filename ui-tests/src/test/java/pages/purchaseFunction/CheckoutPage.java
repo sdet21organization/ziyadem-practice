@@ -49,6 +49,7 @@ public class CheckoutPage extends BasePage {
 
     @Step("Validate required field error alerts")
     public void validateAllEmptyFields() {
+        context.page.waitForTimeout(2000);
         waitForVisibility(REQUIRED_FIELDS_ERROR_ALERT_CONTAINER);
         assertTrue(getLocator(REQUIRED_FIELD_EMAIL_ALERT).isVisible(), "Required field 'E-Mail address' alert is not visible");
         assertTrue(getLocator(REQUIRED_FIELD_FIRST_NAME_ALERT).isVisible(), "Required field 'First name' alert is not visible");
