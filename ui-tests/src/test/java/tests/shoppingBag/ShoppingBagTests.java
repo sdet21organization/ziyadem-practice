@@ -3,6 +3,7 @@ package tests.shoppingBag;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Owner;
+import io.qameta.allure.Story;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pages.productCategories.SpecialFlavorsCategoryPage;
@@ -15,7 +16,8 @@ import java.util.Map;
 
 @Epic("UI Tests")
 @Feature("Shopping Bag")
-@DisplayName("Shopping Bag tests")
+@Story("Shopping Bag Management by Users")
+@DisplayName("Shopping Bag Tests")
 @Owner("Yuliia Nazarenko")
 public class ShoppingBagTests extends BaseTest {
 
@@ -202,5 +204,4 @@ public class ShoppingBagTests extends BaseTest {
                 .openStartPage()
                 .clickShoppingBagIconAndVerify();
     }
-
 }
